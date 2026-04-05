@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚗️ ElementLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f2ff;--text:#1a1a3e;--dim:#8888aa;--dim2:#c0c0d8;
+  --accent:#5b5ef4;--a2:#7c3aed;--a3:#06b6d4;--gold:#f59e0b;
+  --card:rgba(255,255,255,.75);--brd:rgba(90,90,200,.13);--brd2:rgba(90,90,200,.22);
+  --shadow:0 4px 20px rgba(90,60,200,.09);--shadow2:0 8px 36px rgba(90,60,200,.16);
+  --blur:blur(20px);
+}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 15% 20%,rgba(124,58,237,.09) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 10%,rgba(6,182,212,.09) 0%,transparent 45%),
+    radial-gradient(ellipse at 50% 95%,rgba(91,94,244,.07) 0%,transparent 45%),
+    linear-gradient(160deg,#eef0ff 0%,#f5f0ff 50%,#e8f4ff 100%)}
+.wrap{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:10px 16px}
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 4px;flex-wrap:wrap;gap:8px}
+.logo{font-family:'Orbitron',sans-serif;font-size:1.75rem;font-weight:900;background:linear-gradient(135deg,var(--a2),var(--accent),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px}
+.logo-sub{font-size:.6rem;color:var(--dim);letter-spacing:3px;text-transform:uppercase}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.sn{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--a2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sl{font-size:.52rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.sdv{width:1px;height:26px;background:var(--brd2)}
+.lang-btn{display:flex;background:rgba(255,255,255,.7);border:1.5px solid var(--brd2);border-radius:20px;overflow:hidden;backdrop-filter:var(--blur)}
+.lo{padding:5px 14px;font-size:.72rem;font-weight:800;font-family:'Nunito',sans-serif;transition:all .2s;color:var(--dim);background:transparent;border:none;cursor:pointer}
+.lo.on{background:linear-gradient(135deg,var(--a2),var(--accent));color:#fff}
+.prog{height:4px;background:rgba(90,90,200,.1);border-radius:3px;margin:4px 0 7px;overflow:hidden}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--a2),var(--accent),var(--a3));border-radius:3px;transition:width .7s ease}
+.fbar{display:flex;align-items:stretch;background:var(--card);border:2px solid var(--brd);border-radius:18px;margin:5px 0;min-height:60px;transition:border-color .3s,box-shadow .3s;overflow:hidden;backdrop-filter:var(--blur);cursor:pointer;box-shadow:var(--shadow)}
+.fbar:hover{border-color:var(--brd2);box-shadow:var(--shadow2)}
+.fbar.match{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,94,244,.15),var(--shadow2)}
+.fbar.possible{border-color:rgba(124,58,237,.4);box-shadow:0 0 0 3px rgba(124,58,237,.08),var(--shadow)}
+.fb-lbl{font-family:'Orbitron',sans-serif;font-size:.5rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;padding:0 13px;white-space:nowrap;border-right:1.5px solid var(--brd);display:flex;align-items:center;background:rgba(91,94,244,.04)}
+.fb-els{flex:1;padding:0 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:60px}
+.fb-hint{font-size:.79rem;color:var(--dim);font-style:italic;pointer-events:none}
+.fb-chip{display:inline-flex;align-items:center;gap:3px;font-family:'Orbitron',sans-serif;font-size:.97rem;font-weight:700;padding:5px 12px;border-radius:12px;border:2px solid;user-select:none;position:relative;transition:all .15s}
+.fb-chip:hover{transform:scale(1.06);z-index:5;box-shadow:var(--shadow)}
+.fb-cnt{font-size:.64rem;font-family:'Nunito',sans-serif;font-weight:900;background:rgba(0,0,0,.09);border-radius:5px;padding:1px 5px;margin-left:2px}
+.fb-rm{font-size:.56rem;opacity:0;position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;transition:opacity .15s;cursor:pointer;box-shadow:0 2px 6px rgba(239,68,68,.35)}
+.fb-chip:hover .fb-rm{opacity:1}
+.fb-tip{padding:0 14px;font-size:.72rem;font-weight:800;white-space:nowrap;display:flex;align-items:center;border-left:1.5px solid var(--brd)}
+.fb-tip.match{color:var(--accent)}.fb-tip.possible{color:var(--a2)}.fb-tip.none{color:var(--dim)}
+.fb-rst{background:rgba(239,68,68,.07);border-left:1.5px solid var(--brd);color:#ef4444;padding:0 16px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.77rem;transition:all .18s;white-space:nowrap;display:flex;align-items:center}
+.fb-rst:hover{background:rgba(239,68,68,.16)}
+.legend{display:flex;flex-wrap:wrap;gap:5px;margin:3px 0 5px;justify-content:center}
+.leg{display:flex;align-items:center;gap:3px;font-size:.6rem;color:var(--dim);font-weight:700}
+.leg-d{width:8px;height:8px;border-radius:2px}
+.tscroll{overflow-x:auto;padding-bottom:2px}
+.pt{display:grid;grid-template-columns:repeat(18,minmax(52px,1fr));gap:3px;min-width:975px}
+.fb2{display:grid;grid-template-columns:repeat(18,minmax(52px,1fr));gap:3px;min-width:975px;margin-top:3px}
+.el{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid;position:relative;min-width:0;padding:3px;user-select:none;transition:transform .13s,opacity .2s,box-shadow .2s;backdrop-filter:blur(6px)}
+.el:hover:not(.dim){transform:scale(1.18)!important;z-index:30;box-shadow:var(--shadow2),0 0 0 2px currentColor}
+.el .an{font-size:.43rem;opacity:.5;font-family:'Orbitron',sans-serif;line-height:1}
+.el .sym{font-family:'Orbitron',sans-serif;font-size:1.02rem;font-weight:900;line-height:1.1}
+.el .nm{font-size:.34rem;line-height:1.1;text-align:center;opacity:.65}
+.alkali{color:#dc2626;border-color:rgba(220,38,38,.25);background:rgba(254,226,226,.6)}.alkali:hover:not(.dim){background:rgba(254,226,226,.9)}
+.alkaline{color:#c2410c;border-color:rgba(234,88,12,.25);background:rgba(255,237,213,.6)}.alkaline:hover:not(.dim){background:rgba(255,237,213,.9)}
+.transition{color:#1d4ed8;border-color:rgba(37,99,235,.25);background:rgba(219,234,254,.6)}.transition:hover:not(.dim){background:rgba(219,234,254,.9)}
+.post{color:#6d28d9;border-color:rgba(109,40,217,.25);background:rgba(237,233,254,.6)}.post:hover:not(.dim){background:rgba(237,233,254,.9)}
+.metalloid{color:#0e7490;border-color:rgba(8,145,178,.25);background:rgba(207,250,254,.6)}.metalloid:hover:not(.dim){background:rgba(207,250,254,.9)}
+.nonmetal{color:#065f46;border-color:rgba(5,150,105,.25);background:rgba(209,250,229,.6)}.nonmetal:hover:not(.dim){background:rgba(209,250,229,.9)}
+.halogen{color:#9d174d;border-color:rgba(157,23,77,.25);background:rgba(252,231,243,.6)}.halogen:hover:not(.dim){background:rgba(252,231,243,.9)}
+.noble{color:#92400e;border-color:rgba(146,64,14,.25);background:rgba(254,243,199,.6)}.noble:hover:not(.dim){background:rgba(254,243,199,.9)}
+.lanthanide{color:#be185d;border-color:rgba(190,24,93,.25);background:rgba(252,231,243,.6)}.lanthanide:hover:not(.dim){background:rgba(252,231,243,.9)}
+.actinide{color:#92400e;border-color:rgba(146,64,14,.25);background:rgba(254,243,199,.6)}.actinide:hover:not(.dim){background:rgba(254,243,199,.9)}
+.sel{transform:scale(1.1)!important;z-index:10;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px currentColor,0 4px 16px rgba(91,94,244,.2)}50%{box-shadow:0 0 0 3px currentColor,0 6px 28px rgba(91,94,244,.36)}}
+.dim{opacity:.12!important;cursor:not-allowed!important;filter:grayscale(1)}.dim:hover{transform:none!important;box-shadow:none!important}
+.ph-el{border:1.5px dashed rgba(90,90,200,.16);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.42rem;color:var(--dim);font-family:'Orbitron',sans-serif;aspect-ratio:1}
+.rpanel{position:fixed;top:0;right:-445px;width:435px;height:100vh;background:rgba(246,247,255,.93);border-left:1.5px solid var(--brd2);z-index:100;overflow-y:auto;transition:right .38s cubic-bezier(.25,.8,.25,1);backdrop-filter:blur(24px);box-shadow:-12px 0 48px rgba(90,60,200,.13)}
+.rpanel.open{right:0}
+.rpanel-inner{padding:18px;padding-bottom:80px}
+.rphdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.rptitle{font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.rpclose{background:rgba(239,68,68,.07);border:1.5px solid rgba(239,68,68,.2);color:#ef4444;width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:.9rem;transition:all .15s;display:flex;align-items:center;justify-content:center}.rpclose:hover{background:rgba(239,68,68,.18)}
+.cf-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.cfb{padding:4px 11px;border-radius:14px;border:1.5px solid;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.65rem;transition:all .18s;background:transparent;white-space:nowrap}.cfb.on{color:#fff!important;border-color:transparent!important}
+.pgr{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0}
+.pgr button{background:rgba(91,94,244,.07);border:1.5px solid var(--brd2);color:var(--accent);padding:4px 12px;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.7rem;transition:all .15s}.pgr button:hover:not(:disabled){background:rgba(91,94,244,.15)}.pgr button:disabled{opacity:.3;cursor:not-allowed}
+.pgri{font-family:'Orbitron',sans-serif;font-size:.54rem;letter-spacing:.5px;color:var(--dim)}
+.ccard{background:var(--card);border:1.5px solid var(--brd);border-radius:16px;padding:16px;margin-bottom:11px;position:relative;overflow:hidden;animation:ci .28s ease;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+@keyframes ci{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
+.ccard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cc)}
+.ccard.nw::after{content:'⭐ NEW';position:absolute;top:9px;right:9px;font-size:.52rem;font-weight:900;color:var(--gold);background:rgba(245,158,11,.09);border:1.5px solid rgba(245,158,11,.28);padding:2px 7px;border-radius:8px;font-family:'Orbitron',sans-serif;letter-spacing:1px}
+.ccard.poss{opacity:.75;border-style:dashed;background:rgba(255,255,255,.45)}.ccard.poss::before{opacity:.5}
+.cf{font-family:'Orbitron',sans-serif;font-size:1.28rem;font-weight:900;color:var(--cc);line-height:1;margin-bottom:3px;word-break:break-all}
+.cn{font-size:.92rem;font-weight:800;line-height:1.2;margin-bottom:5px}
+.cmeta{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-bottom:9px}
+.cbadge{font-size:.54rem;font-weight:800;padding:2px 8px;border-radius:8px;letter-spacing:.5px;text-transform:uppercase}
+.cstars{font-size:.67rem;letter-spacing:-1px;opacity:.6}
+.cru{font-size:.56rem;color:var(--a2);font-weight:700;padding:1px 5px;border:1.5px solid rgba(124,58,237,.28);border-radius:5px;background:rgba(124,58,237,.06)}
+.cff{font-size:.85rem;line-height:1.55;margin-bottom:7px;border-left:3px solid var(--cc);padding:8px 11px;background:rgba(91,94,244,.04);border-radius:0 10px 10px 0}
+.csn{font-size:.77rem;color:var(--dim);line-height:1.5;margin-bottom:9px;font-style:italic}
+.cposs-lbl{font-size:.71rem;color:var(--dim);font-style:italic;margin-bottom:8px}
+.cprops{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:9px}
+.cprop{background:rgba(91,94,244,.05);border-radius:8px;padding:5px 9px;font-size:.7rem;border:1px solid var(--brd)}
+.cpropk{color:var(--dim);font-size:.57rem;text-transform:uppercase;letter-spacing:.8px;font-weight:700;display:block;margin-bottom:1px}
+.cfeats{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px}
+.cfeat{font-size:.7rem;background:rgba(91,94,244,.07);border-radius:6px;padding:2px 8px;border:1px solid var(--brd)}
+.cuses{display:flex;flex-wrap:wrap;gap:4px}
+.cuse{background:rgba(91,94,244,.06);border:1px solid var(--brd);border-radius:12px;padding:2px 10px;font-size:.68rem;font-weight:700}
+.build-hint{background:rgba(124,58,237,.06);border:1.5px solid rgba(124,58,237,.18);border-radius:12px;padding:12px;margin-bottom:12px;font-size:.82rem;color:var(--a2);line-height:1.5}
+.build-hint strong{color:var(--a2)}
+.flash{position:fixed;inset:0;pointer-events:none;z-index:200;background:radial-gradient(circle at center,rgba(91,94,244,.1),transparent 55%);display:none;animation:fa .7s ease forwards}
+@keyframes fa{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+.conf{position:fixed;pointer-events:none;z-index:300;font-size:1.3rem;animation:fl linear forwards}
+@keyframes fl{from{transform:translateY(-20px) rotate(0deg);opacity:1}to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.tip{position:fixed;background:rgba(255,255,255,.95);border:1.5px solid var(--brd2);border-radius:12px;padding:8px 13px;font-size:.78rem;pointer-events:none;z-index:500;display:none;max-width:200px;line-height:1.5;box-shadow:0 8px 32px rgba(90,60,200,.14);backdrop-filter:blur(12px)}
+.tipn{font-weight:800;font-size:.9rem;margin-bottom:1px}
+.tipm{color:var(--dim);font-size:.68rem}
+footer{text-align:center;padding:12px 0 8px;color:var(--dim);font-size:.67rem;line-height:1.9;border-top:1.5px solid var(--brd);margin-top:8px}
+footer strong{color:var(--text)}footer a{color:var(--accent);text-decoration:none}footer a:hover{text-decoration:underline}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(90,90,200,.18);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="logo">⚗️ ElementLab</div>
+    <div class="logo-sub" id="lbl-sub">University Edition · 267 Compounds</div>
+  </div>
+  <div class="hdr-r">
+    <div style="text-align:center"><div class="sn" id="foundNum">0</div><div class="sl" id="lbl-found">Found</div></div>
+    <div class="sdv"></div>
+    <div style="text-align:center"><div class="sn">267</div><div class="sl" id="lbl-total">Total</div></div>
+    <div class="sdv"></div>
+    <div class="lang-btn">
+      <button class="lo on" id="btnEN" onclick="setLang('en')">EN</button>
+      <button class="lo" id="btnRU" onclick="setLang('ru')">RU</button>
+    </div>
+  </div>
+</header>
+<div class="prog"><div class="prog-f" id="pf" style="width:0%"></div></div>
+<div class="fbar" id="fbar" onclick="barClick(event)">
+  <div class="fb-lbl" id="lbl-formula">Formula</div>
+  <div class="fb-els" id="fbels">
+    <span class="fb-hint" id="fbhint">👆 Click elements — click same element again to add more (Cl+Cl = Cl₂). Click glowing bar to open compounds.</span>
+  </div>
+  <div class="fb-tip none" id="fbtip"></div>
+  <div class="fb-rst" id="lbl-reset" onclick="event.stopPropagation();reset()">✕ Reset</div>
+</div>
+<div class="legend">
+  <div class="leg"><div class="leg-d" style="background:#dc2626"></div><span id="leg0">Alkali</span></div>
+  <div class="leg"><div class="leg-d" style="background:#c2410c"></div><span id="leg1">Alkaline Earth</span></div>
+  <div class="leg"><div class="leg-d" style="background:#1d4ed8"></div><span id="leg2">Transition</span></div>
+  <div class="leg"><div class="leg-d" style="background:#6d28d9"></div><span id="leg3">Post-Trans.</span></div>
+  <div class="leg"><div class="leg-d" style="background:#0e7490"></div><span id="leg4">Metalloid</span></div>
+  <div class="leg"><div class="leg-d" style="background:#065f46"></div><span id="leg5">Nonmetal</span></div>
+  <div class="leg"><div class="leg-d" style="background:#9d174d"></div><span id="leg6">Halogen</span></div>
+  <div class="leg"><div class="leg-d" style="background:#92400e"></div><span id="leg7">Noble Gas</span></div>
+</div>
+<div class="tscroll">
+  <div class="pt" id="pt"></div>
+  <div style="height:3px"></div>
+  <div class="fb2" id="fb2"></div>
+</div>
+</div>
+<div class="rpanel" id="rpanel">
+  <div class="rpanel-inner">
+    <div class="rphdr">
+      <div class="rptitle" id="rptitle">Compounds</div>
+      <button class="rpclose" onclick="closeAndReset()">✕</button>
+    </div>
+    <div class="cf-btns" id="cfbtns"></div>
+    <div class="pgr" id="pgr1" style="display:none"></div>
+    <div id="pcards"></div>
+    <div class="pgr" id="pgr2" style="display:none"></div>
+  </div>
+</div>
+<div class="flash" id="flash"></div>
+<div class="tip" id="tip"></div>
+<footer>
+  ⚗️ <strong>ElementLab University Edition</strong> · 267 compounds · 10 categories · stoichiometric matching<br>
+  💡 Free: <a href="https://github.com" target="_blank">GitHub Pages</a> — upload index.html → Settings → Pages → free forever
+</footer>
+<script>
+const CD=[
+{f:'H₂O',n:'Water',e:['H','O'],cnt:{H:2,O:1},cat:'Common Household',d:1,s:'Liquid',pH:'7.0',bp:'100°C',mp:'0°C',ft:['🌱'],ff:'Water is the only substance found naturally on Earth in all three states!',sn:'Water molecules form hydrogen bonds, giving water unique properties.',fr:'Единственное вещество, встречающееся в природе во всех трёх состояниях!',sr:'Молекулы воды образуют водородные связи.',u:['Drinking','Cleaning','Cooking']},
+{f:'NaCl',n:'Table Salt',e:['Na','Cl'],cnt:{Na:1,Cl:1},cat:'Common Household',d:1,s:'Solid',pH:'7.0',bp:'1413°C',mp:'801°C',ft:['🌱'],ff:'The word \'salary\' comes from the Latin word for salt!',sn:'Salt is an ionic compound formed when sodium loses an electron to chlorine.',fr:'Слово «зарплата» от лат. «соль» — солдатам платили солью!',sr:'Ионное соединение: натрий отдаёт электрон хлору.',u:['Food seasoning','Preservation','De-icing']},
+{f:'CO₂',n:'Carbon Dioxide',e:['C','O'],cnt:{C:1,O:2},cat:'Gases',d:1,s:'Gas',pH:'5.6',bp:'-78.5°C',mp:'-78.5°C',ft:['🌱'],ff:'CO₂ makes up only 0.04% of Earth\'s atmosphere!',sn:'Carbon dioxide is a greenhouse gas that traps heat.',fr:'CO₂ составляет лишь 0,04% атмосферы Земли!',sr:'Парниковый газ, удерживающий тепло.',u:['Photosynthesis','Fizzy drinks','Fire extinguishers']},
+{f:'O₂',n:'Oxygen',e:['O'],cnt:{O:2},cat:'Gases',d:1,s:'Gas',pH:'N/A',bp:'-183°C',mp:'-218°C',ft:['⚡', '🌱'],ff:'Oxygen makes up 21% of Earth\'s atmosphere!',sn:'Oxygen supports combustion - things burn better in pure oxygen!',fr:'Кислород составляет 21% атмосферы!',sr:'Поддерживает горение.',u:['Breathing','Medical','Welding']},
+{f:'CH₄',n:'Methane',e:['C','H'],cnt:{C:1,H:4},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-161.5°C',mp:'-182.5°C',ft:['🔥', '⚡'],ff:'Cows produce methane when they burp!',sn:'Methane is the simplest hydrocarbon.',fr:'Коровы производят метан при отрыжке!',sr:'Простейший углеводород, основа природного газа.',u:['Natural gas','Heating','Electricity']},
+{f:'NH₃',n:'Ammonia',e:['N','H'],cnt:{N:1,H:3},cat:'Common Household',d:2,s:'Gas',pH:'11.6',bp:'-33.3°C',mp:'-77.7°C',ft:['☠️', '🔥', '⚡'],ff:'Ammonia is found in many household cleaners!',sn:'Ammonia is a base that reacts with acids.',fr:'Аммиак в многих чистящих средствах!',sr:'Основание, реагирующее с кислотами.',u:['Cleaning','Fertilizer','Refrigeration']},
+{f:'H₂O₂',n:'Hydrogen Peroxide',e:['H','O'],cnt:{H:2,O:2},cat:'Special',d:2,s:'Liquid',pH:'6.2',bp:'150.2°C',mp:'-0.4°C',ft:['☠️', '⚡'],ff:'It bubbles when it touches a cut!',sn:'H₂O₂ decomposes into water and oxygen gas.',fr:'Пузырится при контакте с ранами!',sr:'Разлагается на воду и кислород.',u:['Disinfectant','Hair bleach','Wound cleaning']},
+{f:'C₆H₁₂O₆',n:'Glucose',e:['C','H','O'],cnt:{C:6,H:12,O:6},cat:'Biology',d:3,s:'Solid',pH:'7.0',bp:'Decomposes',mp:'146°C',ft:['🌱'],ff:'Your brain uses about 120 grams of glucose per day!',sn:'Glucose is the primary energy source for cells.',fr:'Мозг потребляет около 120 г глюкозы в сутки!',sr:'Основной источник энергии для клеток.',u:['Body energy','Food sweetener','Medical IV']},
+{f:'C₂H₅OH',n:'Ethanol',e:['C','H','O'],cnt:{C:2,H:6,O:1},cat:'Organic Compounds',d:3,s:'Liquid',pH:'7.3',bp:'78.4°C',mp:'-114.1°C',ft:['☠️', '🔥'],ff:'Ethanol kills germs by breaking down protein structures!',sn:'Ethanol is produced by fermentation of sugars.',fr:'Этанол убивает микробы, разрушая белки!',sr:'Производится брожением сахаров.',u:['Hand sanitizer','Fuel','Solvent']},
+{f:'H₂SO₄',n:'Sulfuric Acid',e:['H','S','O'],cnt:{H:2,S:1,O:4},cat:'Acids & Bases',d:4,s:'Liquid',pH:'1.0',bp:'337°C',mp:'10°C',ft:['☠️', '⚡'],ff:'⚠️ DANGER! Can cause severe burns!',sn:'One of the most produced chemicals worldwide.',fr:'⚠️ ОПАСНО! Вызывает тяжёлые ожоги!',sr:'Одно из наиболее производимых хим. веществ.',u:['Car batteries','Fertilizer','Chemical production']},
+{f:'HCl',n:'Hydrochloric Acid',e:['H','Cl'],cnt:{H:1,Cl:1},cat:'Acids & Bases',d:3,s:'Liquid',pH:'1.0',bp:'110°C',mp:'-26°C',ft:['☠️', '⚡'],ff:'Your stomach produces this to digest food!',sn:'Stomach acid has a pH of 1.5-3.5!',fr:'Желудок вырабатывает его для переваривания пищи!',sr:'Желудочный сок имеет pH 1,5–3,5!',u:['Stomach acid','Steel cleaning','Pool maintenance']},
+{f:'NaOH',n:'Sodium Hydroxide',e:['Na','O','H'],cnt:{Na:1,O:1,H:1},cat:'Acids & Bases',d:3,s:'Solid',pH:'14.0',bp:'1388°C',mp:'318°C',ft:['☠️', '⚡'],ff:'Called \'lye\' and used to make soap!',sn:'NaOH is a strong base that reacts violently with acids.',fr:'Называется «щёлочь» — используется для мыла!',sr:'Сильное основание.',u:['Soap making','Drain cleaner','Paper production']},
+{f:'CaCO₃',n:'Calcium Carbonate',e:['Ca','C','O'],cnt:{Ca:1,C:1,O:3},cat:'Minerals',d:2,s:'Solid',pH:'9.0',bp:'Decomposes',mp:'825°C',ft:['🌱'],ff:'Makes up seashells, eggshells, and limestone!',sn:'Reacts with acids to produce CO₂ gas!',fr:'Ракушки, яичная скорлупа, известняк!',sr:'Реагирует с кислотами, выделяя CO₂!',u:['Antacids','Chalk','Building material']},
+{f:'Fe₂O₃',n:'Iron Oxide',e:['Fe','O'],cnt:{Fe:2,O:3},cat:'Minerals',d:2,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'1565°C',ft:[],ff:'Gives Mars its red color - Mars is rusty!',sn:'Forms when iron reacts with oxygen and water.',fr:'Марс красный именно из-за ржавчины!',sr:'Образуется при окислении железа.',u:['Rust','Pigment','Iron ore']},
+{f:'N₂',n:'Nitrogen',e:['N'],cnt:{N:2},cat:'Gases',d:1,s:'Gas',pH:'N/A',bp:'-196°C',mp:'-210°C',ft:['🌱'],ff:'Makes up 78% of Earth\'s atmosphere!',sn:'N₂ has a triple bond making it very stable.',fr:'Составляет 78% атмосферы Земли!',sr:'Тройная связь делает молекулу очень стабильной.',u:['Atmosphere','Food preservation','Fertilizer']},
+{f:'H₂',n:'Hydrogen',e:['H'],cnt:{H:2},cat:'Gases',d:1,s:'Gas',pH:'N/A',bp:'-253°C',mp:'-259°C',ft:['🔥', '⚡', '🌱'],ff:'Lightest and most abundant element in the universe!',sn:'H₂ is highly flammable!',fr:'Самый лёгкий элемент во Вселенной!',sr:'Легко воспламеняется!',u:['Fuel cells','Rocket fuel','Chemical production']},
+{f:'He',n:'Helium',e:['He'],cnt:{He:1},cat:'Gases',d:1,s:'Gas',pH:'N/A',bp:'-269°C',mp:'-272°C',ft:[],ff:'Discovered on the Sun before Earth!',sn:'Helium is a noble gas and doesn\'t react.',fr:'',sr:'',u:['Balloons','Welding','MRI cooling']},
+{f:'Ne',n:'Neon',e:['Ne'],cnt:{Ne:1},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-246°C',mp:'-249°C',ft:[],ff:'Glows red-orange when electricity passes through!',sn:'Emits light when electrically excited.',fr:'',sr:'',u:['Neon signs','Lighting','Lasers']},
+{f:'Ar',n:'Argon',e:['Ar'],cnt:{Ar:1},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-186°C',mp:'-189°C',ft:[],ff:'Makes up about 1% of Earth\'s atmosphere!',sn:'Used in light bulbs to prevent filament burning.',fr:'',sr:'',u:['Light bulbs','Welding','Windows']},
+{f:'CO',n:'Carbon Monoxide',e:['C','O'],cnt:{C:1,O:1},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-191.5°C',mp:'-205°C',ft:['☠️', '🔥', '⚡'],ff:'⚠️ DANGER! Odorless and deadly!',sn:'Binds to hemoglobin better than oxygen.',fr:'⚠️ Без запаха и смертельно опасен!',sr:'Связывается с гемоглобином.',u:['Chemical production','Metal refining']},
+{f:'C₃H₈',n:'Propane',e:['C','H'],cnt:{C:3,H:8},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-42°C',mp:'-188°C',ft:['🔥'],ff:'Has smell added to detect leaks!',sn:'Stored as liquid under pressure.',fr:'',sr:'',u:['BBQ grills','Heating','Camping']},
+{f:'C₄H₁₀',n:'Butane',e:['C','H'],cnt:{C:4,H:10},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-1°C',mp:'-138°C',ft:['🔥'],ff:'What makes lighters work!',sn:'Has two isomers with different properties.',fr:'',sr:'',u:['Lighter fluid','Camping stoves','Fuel']},
+{f:'CH₃COOH',n:'Acetic Acid',e:['C','H','O'],cnt:{C:2,H:4,O:2},cat:'Acids & Bases',d:2,s:'Liquid',pH:'2.4',bp:'118°C',mp:'16.6°C',ft:['🔥', '⚡'],ff:'Vinegar is about 5% acetic acid!',sn:'Produced when ethanol is oxidized.',fr:'Уксус — 5% уксусной кислоты!',sr:'Образуется при окислении этанола.',u:['Vinegar','Food preservative','Cleaning']},
+{f:'C₆H₈O₇',n:'Citric Acid',e:['C','H','O'],cnt:{C:6,H:8,O:7},cat:'Food & Drink',d:2,s:'Solid',pH:'2.2',bp:'Decomposes',mp:'153°C',ft:['⚡'],ff:'Makes lemons and limes taste sour!',sn:'Part of the Krebs cycle for energy!',fr:'',sr:'',u:['Food flavoring','Preservative','Cleaning']},
+{f:'C₆H₈O₆',n:'Ascorbic Acid',e:['C','H','O'],cnt:{C:6,H:8,O:6},cat:'Medicine',d:3,s:'Solid',pH:'4.0',bp:'Decomposes',mp:'190°C',ft:['⚡', '🌱'],ff:'Sailors used to get scurvy without it!',sn:'Vitamin C is an antioxidant.',fr:'Моряки гибли от цинги без него!',sr:'Витамин C — антиоксидант.',u:['Vitamin C','Food preservative','Antioxidant']},
+{f:'C₁₂H₂₂O₁₁',n:'Sucrose',e:['C','H','O'],cnt:{C:12,H:22,O:11},cat:'Food & Drink',d:2,s:'Solid',pH:'7.0',bp:'Decomposes',mp:'186°C',ft:[],ff:'Made from sugarcane or sugar beets!',sn:'Disaccharide of glucose and fructose.',fr:'Получают из тростника!',sr:'Дисахарид: глюкоза + фруктоза.',u:['Table sugar','Food sweetener','Baking']},
+{f:'C₈H₁₀N₄O₂',n:'Caffeine',e:['C','H','N','O'],cnt:{C:8,H:10,N:4,O:2},cat:'Food & Drink',d:4,s:'Solid',pH:'N/A',bp:'178°C',mp:'235°C',ft:[],ff:'Blocks adenosine receptors making you feel less tired!',sn:'Stimulant affecting the central nervous system.',fr:'Блокирует рецепторы аденозина!',sr:'Стимулятор ЦНС.',u:['Coffee','Tea','Energy drinks']},
+{f:'C₉H₈O₄',n:'Aspirin',e:['C','H','O'],cnt:{C:9,H:8,O:4},cat:'Medicine',d:4,s:'Solid',pH:'3.5',bp:'140°C',mp:'135°C',ft:[],ff:'Comes from willow bark - ancient Greeks used it!',sn:'Reduces inflammation by blocking enzymes.',fr:'Из коры ивы — греки использовали её!',sr:'Снижает воспаление.',u:['Pain relief','Fever reducer','Blood thinner']},
+{f:'C₁₃H₁₈O₂',n:'Ibuprofen',e:['C','H','O'],cnt:{C:13,H:18,O:2},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'157°C',mp:'76°C',ft:[],ff:'Developed in the 1960s!',sn:'NSAID - non-steroidal anti-inflammatory drug.',fr:'Разработан в 1960-х!',sr:'НПВП — нестероидный препарат.',u:['Pain relief','Fever reducer','Anti-inflammatory']},
+{f:'C₁₆H₁₈N₂O₄S',n:'Penicillin',e:['C','H','N','O','S'],cnt:{C:16,H:18,N:2,O:4,S:1},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'214°C',ft:[],ff:'Discovered by accident from mold!',sn:'Kills bacteria by preventing cell wall building.',fr:'Открыт случайно — из плесени!',sr:'Убивает бактерии.',u:['Antibiotic','Bacterial infection']},
+{f:'C₁₅H₃₁N₅O₉P₂',n:'DNA',e:['C','H','N','O','P'],cnt:{C:15,H:31,N:5,O:9,P:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'Decomposes',ft:['🌱'],ff:'2 meters long if stretched out!',sn:'Stores genetic info in double helix.',fr:'',sr:'',u:['Genetic information','Heredity']},
+{f:'C₁₀H₁₆N₅O₁₃P₃',n:'ATP',e:['C','H','N','O','P'],cnt:{C:10,H:16,N:5,O:13,P:3},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'Decomposes',ft:['⚡', '🌱'],ff:'You use your body weight in ATP daily!',sn:'Releases energy when phosphate removed.',fr:'',sr:'',u:['Cell energy','Muscle contraction']},
+{f:'Al₂O₃',n:'Aluminum Oxide',e:['Al','O'],cnt:{Al:2,O:3},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'2977°C',mp:'2072°C',ft:[],ff:'Rubies and sapphires are this!',sn:'Extremely hard and heat resistant.',fr:'Рубины и сапфиры — это оно!',sr:'Чрезвычайно твёрдое.',u:['Abrasive','Ceramics','Gemstones']},
+{f:'SiO₂',n:'Silicon Dioxide',e:['Si','O'],cnt:{Si:1,O:2},cat:'Minerals',d:2,s:'Solid',pH:'N/A',bp:'2230°C',mp:'1710°C',ft:[],ff:'Used to make glass and chips!',sn:'Forms network of silicon-oxygen bonds.',fr:'Используется для стекла и чипов!',sr:'Образует сеть Si–O связей.',u:['Glass','Sand','Computer chips']},
+{f:'FeS₂',n:'Pyrite',e:['Fe','S'],cnt:{Fe:1,S:2},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'1171°C',ft:[],ff:'Called \'Fool\'s Gold\'!',sn:'Creates sparks when struck.',fr:'«Золото дураков»!',sr:'Высекает искры при ударе.',u:['Sulfur source','Collecting']},
+{f:'C',n:'Graphite',e:['C'],cnt:{C:1},cat:'Minerals',d:2,s:'Solid',pH:'N/A',bp:'4827°C',mp:'3652°C',ft:[],ff:'Same as diamond, different structure!',sn:'Layers slide easily - that\'s why slippery.',fr:'',sr:'',u:['Pencils','Lubricant','Batteries']},
+{f:'Mg₃Si₄O₁₀(OH)₂',n:'Talc',e:['O','H','Mg','Si'],cnt:{O:12,H:2,Mg:3,Si:4},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'Decomposes',ft:[],ff:'Softest mineral on Mohs scale!',sn:'Layered structure makes it soft.',fr:'',sr:'',u:['Baby powder','Cosmetics','Lubricant']},
+{f:'NaHCO₃',n:'Baking Soda',e:['Na','H','C','O'],cnt:{Na:1,H:1,C:1,O:3},cat:'Common Household',d:1,s:'Solid',pH:'8.3',bp:'Decomposes',mp:'50°C',ft:['⚡'],ff:'Makes cakes rise by producing CO₂!',sn:'Reacts with acid to produce carbon dioxide.',fr:'Заставляет кексы подниматься!',sr:'Реагирует с кислотой, образуя CO₂.',u:['Baking','Cleaning','Deodorizer']},
+{f:'Na₂CO₃',n:'Washing Soda',e:['Na','C','O'],cnt:{Na:2,C:1,O:3},cat:'Common Household',d:2,s:'Solid',pH:'11.0',bp:'Decomposes',mp:'851°C',ft:['⚡'],ff:'Stronger than baking soda for cleaning!',sn:'Sodium carbonate is more alkaline.',fr:'Мощнее пищевой соды!',sr:'Более щелочной.',u:['Laundry','Cleaning','Water softener']},
+{f:'NaClO',n:'Bleach',e:['Na','Cl','O'],cnt:{Na:1,Cl:1,O:1},cat:'Common Household',d:2,s:'Liquid',pH:'12.0',bp:'101°C',mp:'-6°C',ft:['☠️', '⚡'],ff:'⚠️ Never mix with ammonia - creates toxic gas!',sn:'Sodium hypochlorite kills bacteria and viruses.',fr:'⚠️ Никогда не смешивайте с аммиаком!',sr:'Уничтожает бактерии.',u:['Disinfecting','Whitening','Cleaning']},
+{f:'C₃H₈O',n:'Rubbing Alcohol',e:['C','H','O'],cnt:{C:3,H:8,O:1},cat:'Common Household',d:2,s:'Liquid',pH:'7.0',bp:'82.6°C',mp:'-89°C',ft:['☠️', '🔥'],ff:'Evaporates quickly and cools skin!',sn:'Isopropyl alcohol kills germs effectively.',fr:'',sr:'',u:['Disinfecting','Cleaning','First aid']},
+{f:'Complex mixture',n:'Milk',e:['Co'],cnt:{Co:1},cat:'Food & Drink',d:2,s:'Liquid',pH:'6.5',bp:'100°C',mp:'0°C',ft:['🌱'],ff:'Contains lactose, proteins, and fats!',sn:'Complex mixture of many compounds.',fr:'',sr:'',u:['Drinking','Cooking','Calcium source']},
+{f:'C₁₈H₃₄O₂',n:'Olive Oil',e:['C','H','O'],cnt:{C:18,H:34,O:2},cat:'Food & Drink',d:3,s:'Liquid',pH:'N/A',bp:'300°C',mp:'-6°C',ft:['🔥'],ff:'Main fat in Mediterranean diet!',sn:'Mainly oleic acid (monounsaturated fat).',fr:'',sr:'',u:['Cooking','Salad dressing','Skin care']},
+{f:'Complex protein',n:'Egg White',e:['Co'],cnt:{Co:1},cat:'Food & Drink',d:3,s:'Liquid/Solid',pH:'9.0',bp:'Coagulates',mp:'N/A',ft:[],ff:'Turns from clear to white when cooked!',sn:'Proteins denature when heated.',fr:'',sr:'',u:['Cooking','Baking','Protein source']},
+{f:'Complex polymer',n:'Protein',e:['Co'],cnt:{Co:1},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'Decomposes',ft:['🌱'],ff:'Made of 20 different amino acids!',sn:'Chains of amino acids folded into shapes.',fr:'',sr:'',u:['Body building','Enzymes','Muscle']},
+{f:'CH₄N₂O',n:'Urea',e:['C','H','N','O'],cnt:{C:1,H:4,N:2,O:1},cat:'Biology',d:4,s:'Solid',pH:'7.0',bp:'Decomposes',mp:'133°C',ft:[],ff:'Your body produces this to remove nitrogen!',sn:'Main nitrogen-containing waste in urine.',fr:'',sr:'',u:['Fertilizer','Waste product','Skin care']},
+{f:'C₉H₁₃NO₃',n:'Adrenaline',e:['C','H','N','O'],cnt:{C:9,H:13,N:1,O:3},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'211°C',ft:['🌱'],ff:'Released when you\'re scared or excited!',sn:'Stress hormone from adrenal glands.',fr:'Выделяется при страхе!',sr:'Гормон стресса.',u:['Fight or flight','Medical emergency','Hormone']},
+{f:'C₈H₁₁NO₂',n:'Dopamine',e:['C','H','N','O'],cnt:{C:8,H:11,N:1,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'Decomposes',ft:['🌱'],ff:'Makes you feel happy and rewarded!',sn:'Neurotransmitter in the brain.',fr:'Вызывает радость!',sr:'Нейромедиатор мозга.',u:['Brain signaling','Reward system','Movement']},
+{f:'C₁₀H₁₂N₂O',n:'Serotonin',e:['C','H','N','O'],cnt:{C:10,H:12,N:2,O:1},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'167°C',ft:['🌱'],ff:'90% is in your gut, not your brain!',sn:'Neurotransmitter regulating mood.',fr:'90% серотонина в кишечнике!',sr:'Регулятор настроения.',u:['Mood regulation','Sleep','Digestion']},
+{f:'C₁₃H₁₆N₂O₂',n:'Melatonin',e:['C','H','N','O'],cnt:{C:13,H:16,N:2,O:2},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'117°C',ft:['🌱'],ff:'Your body makes this when it\'s dark!',sn:'Hormone that regulates sleep-wake cycle.',fr:'',sr:'',u:['Sleep regulation','Jet lag','Supplement']},
+{f:'C₈H₉NO₂',n:'Paracetamol',e:['C','H','N','O'],cnt:{C:8,H:9,N:1,O:2},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'169°C',ft:[],ff:'Also called acetaminophen in the US!',sn:'Works on pain receptors in the brain.',fr:'В США называется ацетаминофеном!',sr:'Воздействует на болевые рецепторы.',u:['Pain relief','Fever reducer','Common medicine']},
+{f:'C₁₇H₂₁NO',n:'Antihistamine',e:['C','H','N','O'],cnt:{C:17,H:21,N:1,O:1},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'27°C',ft:[],ff:'Blocks histamine that causes allergies!',sn:'Blocks histamine receptors.',fr:'',sr:'',u:['Allergy relief','Cold symptoms','Itch relief']},
+{f:'C₂₁H₃₀O₅',n:'Cortisol',e:['C','H','O'],cnt:{C:21,H:30,O:5},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'215°C',ft:['🌱'],ff:'Known as the stress hormone!',sn:'Steroid hormone from adrenal glands.',fr:'',sr:'',u:['Stress response','Metabolism','Inflammation']},
+{f:'C₁₉H₂₈O₂',n:'Testosterone',e:['C','H','O'],cnt:{C:19,H:28,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'155°C',ft:['🌱'],ff:'Main male sex hormone!',sn:'Steroid hormone.',fr:'',sr:'',u:['Male hormone','Muscle growth','Development']},
+{f:'C₁₈H₂₄O₂',n:'Estrogen',e:['C','H','O'],cnt:{C:18,H:24,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'260°C',ft:['🌱'],ff:'Main female sex hormone!',sn:'Steroid hormone group.',fr:'',sr:'',u:['Female hormone','Development','Reproduction']},
+{f:'C₁₅H₁₁I₄NO₄',n:'Thyroxine',e:['C','H','I','N','O'],cnt:{C:15,H:11,I:4,N:1,O:4},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'235°C',ft:['🌱'],ff:'Contains iodine - that\'s why we need iodine!',sn:'Thyroid hormone.',fr:'',sr:'',u:['Metabolism','Growth','Development']},
+{f:'N₂O',n:'Nitrous Oxide',e:['N','O'],cnt:{N:2,O:1},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-88°C',mp:'-91°C',ft:[],ff:'Called \'laughing gas\'!',sn:'Used as anesthetic and propellant.',fr:'«Веселящий газ»!',sr:'Анестетик и пропеллент.',u:['Anesthesia','Whipped cream','Racing']},
+{f:'SO₂',n:'Sulfur Dioxide',e:['S','O'],cnt:{S:1,O:2},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-10°C',mp:'-72°C',ft:['☠️', '⚡'],ff:'Smells like burnt matches!',sn:'Produced by burning sulfur.',fr:'Пахнет горящими спичками!',sr:'Образуется при сжигании серы.',u:['Preservative','Chemical production','Volcanoes']},
+{f:'H₂S',n:'Hydrogen Sulfide',e:['H','S'],cnt:{H:2,S:1},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-60°C',mp:'-82°C',ft:['☠️', '🔥', '⚡'],ff:'⚠️ Smells like rotten eggs and is toxic!',sn:'Produced by bacteria in swamps.',fr:'⚠️ Пахнет тухлыми яйцами!',sr:'Вырабатывается бактериями.',u:['Chemical production','Analysis','Natural gas']},
+{f:'PH₃',n:'Phosphine',e:['P','H'],cnt:{P:1,H:3},cat:'Gases',d:4,s:'Gas',pH:'N/A',bp:'-87.7°C',mp:'-133°C',ft:['☠️', '🔥', '⚡'],ff:'⚠️ Highly toxic and flammable!',sn:'Phosphorus analog of ammonia.',fr:'',sr:'',u:['Semiconductor','Fumigant','Chemical production']},
+{f:'SiH₄',n:'Silane',e:['Si','H'],cnt:{Si:1,H:4},cat:'Gases',d:4,s:'Gas',pH:'N/A',bp:'-112°C',mp:'-185°C',ft:['🔥', '⚡'],ff:'Used to make computer chips!',sn:'Silicon analog of methane.',fr:'',sr:'',u:['Semiconductor','Solar panels','Chemical production']},
+{f:'Cl₂',n:'Chlorine',e:['Cl'],cnt:{Cl:2},cat:'Gases',d:2,s:'Gas',pH:'N/A',bp:'-34°C',mp:'-101°C',ft:['☠️', '⚡'],ff:'Used to clean swimming pools!',sn:'Highly reactive halogen.',fr:'',sr:'',u:['Water treatment','Bleach','Disinfectant']},
+{f:'F₂',n:'Fluorine',e:['F'],cnt:{F:2},cat:'Gases',d:4,s:'Gas',pH:'N/A',bp:'-188°C',mp:'-220°C',ft:['☠️', '⚡'],ff:'Most reactive element!',sn:'Most electronegative element.',fr:'',sr:'',u:['Toothpaste','Chemical production','Refrigerants']},
+{f:'Br₂',n:'Bromine',e:['Br'],cnt:{Br:2},cat:'Gases',d:3,s:'Liquid',pH:'N/A',bp:'59°C',mp:'-7°C',ft:['☠️', '⚡'],ff:'Only liquid nonmetal at room temperature!',sn:'Halogen element.',fr:'',sr:'',u:['Flame retardant','Photography','Medicine']},
+{f:'I₂',n:'Iodine',e:['I'],cnt:{I:2},cat:'Gases',d:2,s:'Solid',pH:'N/A',bp:'184°C',mp:'114°C',ft:['⚡', '🌱'],ff:'Turns starch blue-black!',sn:'Essential for thyroid function.',fr:'',sr:'',u:['Antiseptic','Thyroid health','Photography']},
+{f:'Xe',n:'Xenon',e:['Xe'],cnt:{Xe:1},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-108°C',mp:'-112°C',ft:[],ff:'Used in spacecraft ion engines!',sn:'Noble gas, can form compounds.',fr:'',sr:'',u:['Lighting','Anesthesia','Ion propulsion']},
+{f:'Kr',n:'Krypton',e:['Kr'],cnt:{Kr:1},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-153°C',mp:'-157°C',ft:[],ff:'Used in airport runway lights!',sn:'Noble gas.',fr:'',sr:'',u:['Lighting','Photography','Lasers']},
+{f:'Rn',n:'Radon',e:['Rn'],cnt:{Rn:1},cat:'Gases',d:4,s:'Gas',pH:'N/A',bp:'-62°C',mp:'-71°C',ft:['☠️'],ff:'⚠️ Radioactive - can cause lung cancer!',sn:'Radioactive noble gas.',fr:'',sr:'',u:['Medical treatment','Research']},
+{f:'O₃',n:'Ozone',e:['O'],cnt:{O:3},cat:'Special',d:3,s:'Gas',pH:'N/A',bp:'-112°C',mp:'-193°C',ft:['☠️', '⚡', '🌱'],ff:'Protects us from harmful UV rays!',sn:'Three oxygen atoms bonded together.',fr:'Защищает от ультрафиолета!',sr:'Три атома кислорода.',u:['UV protection','Water treatment','Air purification']},
+{f:'C₂H₂',n:'Acetylene',e:['C','H'],cnt:{C:2,H:2},cat:'Gases',d:3,s:'Gas',pH:'N/A',bp:'-84°C',mp:'-81°C',ft:['🔥', '⚡'],ff:'Burns at 3300°C - hottest flame!',sn:'Triple bond between carbons.',fr:'Горит при 3300°C!',sr:'Тройная связь между атомами углерода.',u:['Welding','Cutting metal','Chemical production']},
+{f:'C₂H₄',n:'Ethylene',e:['C','H'],cnt:{C:2,H:4},cat:'Organic Compounds',d:3,s:'Gas',pH:'N/A',bp:'-104°C',mp:'-169°C',ft:['🔥', '⚡'],ff:'Makes bananas ripen faster!',sn:'Plant hormone for ripening.',fr:'Ускоряет созревание бананов!',sr:'Растительный гормон.',u:['Ripening fruit','Plastic production','Chemical production']},
+{f:'C₃H₆',n:'Propylene',e:['C','H'],cnt:{C:3,H:6},cat:'Organic Compounds',d:3,s:'Gas',pH:'N/A',bp:'-48°C',mp:'-185°C',ft:['🔥', '⚡'],ff:'Used to make polypropylene plastic!',sn:'Unsaturated hydrocarbon.',fr:'',sr:'',u:['Plastic production','Chemical production','Fuel']},
+{f:'C₆H₆',n:'Benzene',e:['C','H'],cnt:{C:6,H:6},cat:'Organic Compounds',d:4,s:'Liquid',pH:'N/A',bp:'80°C',mp:'6°C',ft:['☠️', '🔥'],ff:'⚠️ Carcinogenic - causes cancer!',sn:'Ring structure with alternating bonds.',fr:'⚠️ Канцероген — вызывает рак!',sr:'Кольцевая структура.',u:['Chemical production','Solvent','Plastics']},
+{f:'C₇H₈',n:'Toluene',e:['C','H'],cnt:{C:7,H:8},cat:'Organic Compounds',d:4,s:'Liquid',pH:'N/A',bp:'111°C',mp:'-95°C',ft:['☠️', '🔥'],ff:'Used in paint thinners and glues!',sn:'Benzene with methyl group.',fr:'',sr:'',u:['Solvent','Paint thinner','Chemical production']},
+{f:'C₃H₆O',n:'Acetone',e:['C','H','O'],cnt:{C:3,H:6,O:1},cat:'Organic Compounds',d:3,s:'Liquid',pH:'N/A',bp:'56°C',mp:'-95°C',ft:['🔥'],ff:'Main ingredient in nail polish remover!',sn:'Simplest ketone.',fr:'Основа жидкости для снятия лака!',sr:'Простейший кетон.',u:['Nail polish remover','Solvent','Cleaning']},
+{f:'CH₂O',n:'Formaldehyde',e:['C','H','O'],cnt:{C:1,H:2,O:1},cat:'Organic Compounds',d:4,s:'Gas/Liquid',pH:'N/A',bp:'-19°C',mp:'-92°C',ft:['☠️', '🔥', '⚡'],ff:'⚠️ Used to preserve specimens!',sn:'Simplest aldehyde.',fr:'',sr:'',u:['Preservative','Disinfectant','Chemical production']},
+{f:'CH₃OH',n:'Methanol',e:['C','H','O'],cnt:{C:1,H:4,O:1},cat:'Organic Compounds',d:3,s:'Liquid',pH:'N/A',bp:'65°C',mp:'-98°C',ft:['☠️', '🔥'],ff:'⚠️ Poisonous - can cause blindness!',sn:'Simplest alcohol.',fr:'',sr:'',u:['Fuel','Solvent','Chemical production']},
+{f:'C₃H₈O₃',n:'Glycerol',e:['C','H','O'],cnt:{C:3,H:8,O:3},cat:'Organic Compounds',d:3,s:'Liquid',pH:'N/A',bp:'290°C',mp:'18°C',ft:[],ff:'Sweet and used in many products!',sn:'Three-carbon alcohol.',fr:'',sr:'',u:['Soap','Food','Medicine']},
+{f:'C₂H₅NO₂',n:'Glycine',e:['C','H','N','O'],cnt:{C:2,H:5,N:1,O:2},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'233°C',ft:['🌱'],ff:'Simplest amino acid!',sn:'Amino acid building block.',fr:'',sr:'',u:['Protein building','Supplement','Research']},
+{f:'C₃H₇NO₂',n:'Alanine',e:['C','H','N','O'],cnt:{C:3,H:7,N:1,O:2},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'297°C',ft:[],ff:'Common amino acid in proteins!',sn:'Amino acid.',fr:'',sr:'',u:['Protein building','Energy','Supplement']},
+{f:'C₃H₇NO₂S',n:'Cysteine',e:['C','H','N','O','S'],cnt:{C:3,H:7,N:1,O:2,S:1},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'240°C',ft:['⚡'],ff:'Gives hair its strength!',sn:'Contains sulfur for disulfide bonds.',fr:'',sr:'',u:['Protein building','Hair structure','Antioxidant']},
+{f:'C₉H₁₁NO₃',n:'Tyrosine',e:['C','H','N','O'],cnt:{C:9,H:11,N:1,O:3},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'343°C',ft:[],ff:'Precursor to dopamine!',sn:'Amino acid.',fr:'',sr:'',u:['Protein building','Neurotransmitter precursor','Supplement']},
+{f:'C₁₁H₁₂N₂O₂',n:'Tryptophan',e:['C','H','N','O'],cnt:{C:11,H:12,N:2,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'289°C',ft:['🌱'],ff:'Makes you sleepy after turkey dinner!',sn:'Precursor to serotonin.',fr:'',sr:'',u:['Protein building','Sleep aid','Mood']},
+{f:'C₆H₉N₃O₂',n:'Histidine',e:['C','H','N','O'],cnt:{C:6,H:9,N:3,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'282°C',ft:['🌱'],ff:'Essential for infants!',sn:'Amino acid with imidazole ring.',fr:'',sr:'',u:['Protein building','Enzyme function','Growth']},
+{f:'C₆H₁₄N₂O₂',n:'Lysine',e:['C','H','N','O'],cnt:{C:6,H:14,N:2,O:2},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'224°C',ft:['🌱'],ff:'Essential amino acid - must get from food!',sn:'Essential amino acid.',fr:'',sr:'',u:['Protein building','Supplement','Cold sore treatment']},
+{f:'C₆H₁₄N₄O₂',n:'Arginine',e:['C','H','N','O'],cnt:{C:6,H:14,N:4,O:2},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'244°C',ft:[],ff:'Helps with blood circulation!',sn:'Amino acid.',fr:'',sr:'',u:['Protein building','Blood flow','Supplement']},
+{f:'C₅H₁₀N₂O₃',n:'Glutamine',e:['C','H','N','O'],cnt:{C:5,H:10,N:2,O:3},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'185°C',ft:[],ff:'Most abundant amino acid in blood!',sn:'Amino acid.',fr:'',sr:'',u:['Protein building','Muscle recovery','Gut health']},
+{f:'C₄H₉N₃O₂',n:'Creatine',e:['C','H','N','O'],cnt:{C:4,H:9,N:3,O:2},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'300°C',ft:[],ff:'Popular sports supplement for strength!',sn:'Energy storage in muscles.',fr:'',sr:'',u:['Muscle energy','Sports supplement','Brain function']},
+{f:'C₇H₁₅NO₃',n:'Carnitine',e:['C','H','N','O'],cnt:{C:7,H:15,N:1,O:3},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'214°C',ft:[],ff:'Helps burn fat for energy!',sn:'Transports fatty acids.',fr:'',sr:'',u:['Fat metabolism','Energy','Supplement']},
+{f:'C₅H₁₄NO',n:'Choline',e:['C','H','N','O'],cnt:{C:5,H:14,N:1,O:1},cat:'Biology',d:4,s:'Liquid',pH:'N/A',bp:'Decomposes',mp:'305°C',ft:['🌱'],ff:'Important for brain development!',sn:'Vitamin-like nutrient.',fr:'',sr:'',u:['Brain function','Cell membranes','Liver health']},
+{f:'C₁₀H₁₆N₂O₃S',n:'Biotin',e:['C','H','N','O','S'],cnt:{C:10,H:16,N:2,O:3,S:1},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'232°C',ft:['🌱'],ff:'Vitamin B7 for hair and nails!',sn:'B vitamin.',fr:'',sr:'',u:['Hair growth','Nail health','Metabolism']},
+{f:'C₁₉H₁₉N₇O₆',n:'Folic Acid',e:['C','H','N','O'],cnt:{C:19,H:19,N:7,O:6},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'250°C',ft:['🌱'],ff:'Prevents birth defects!',sn:'Vitamin B9.',fr:'',sr:'',u:['Pregnancy','Cell division','DNA synthesis']},
+{f:'C₂₇H₄₄O',n:'Vitamin D',e:['C','H','O'],cnt:{C:27,H:44,O:1},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'82°C',ft:['🌱'],ff:'Your body makes it from sunlight!',sn:'Fat-soluble vitamin.',fr:'',sr:'',u:['Bone health','Immune system','Sunlight']},
+{f:'C₂₀H₃₀O',n:'Vitamin A',e:['C','H','O'],cnt:{C:20,H:30,O:1},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'64°C',ft:['🌱'],ff:'Good for your eyes!',sn:'Fat-soluble vitamin.',fr:'',sr:'',u:['Vision','Immune system','Skin health']},
+{f:'C₃₁H₄₆O₂',n:'Vitamin K',e:['C','H','O'],cnt:{C:31,H:46,O:2},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'N/A',ft:['🌱'],ff:'Helps blood clot when you get a cut!',sn:'Fat-soluble vitamin.',fr:'',sr:'',u:['Blood clotting','Bone health','Wound healing']},
+{f:'C₁₂H₁₇N₄OS',n:'Vitamin B1',e:['C','H','N','O','S'],cnt:{C:12,H:17,N:4,O:1,S:1},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'250°C',ft:['🌱'],ff:'Also called Thiamine!',sn:'Water-soluble vitamin.',fr:'',sr:'',u:['Energy metabolism','Nerve function','Heart health']},
+{f:'C₁₇H₂₀N₄O₆',n:'Vitamin B2',e:['C','H','N','O'],cnt:{C:17,H:20,N:4,O:6},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'280°C',ft:['🌱'],ff:'Also called Riboflavin!',sn:'Water-soluble vitamin.',fr:'',sr:'',u:['Energy','Vision','Skin health']},
+{f:'C₆H₅NO₂',n:'Vitamin B3',e:['C','H','N','O'],cnt:{C:6,H:5,N:1,O:2},cat:'Medicine',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'237°C',ft:['🌱'],ff:'Also called Niacin!',sn:'Water-soluble vitamin.',fr:'',sr:'',u:['Energy','Digestion','Skin health']},
+{f:'C₈H₁₁NO₃',n:'Vitamin B6',e:['C','H','N','O'],cnt:{C:8,H:11,N:1,O:3},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'205°C',ft:['🌱'],ff:'Helps make serotonin!',sn:'Water-soluble vitamin.',fr:'',sr:'',u:['Brain function','Mood','Hemoglobin']},
+{f:'Ca',n:'Calcium',e:['Ca'],cnt:{Ca:1},cat:'Metals & Alloys',d:1,s:'Solid',pH:'N/A',bp:'1484°C',mp:'842°C',ft:['⚡', '🌱'],ff:'Most abundant mineral in your body!',sn:'Alkaline earth metal.',fr:'',sr:'',u:['Bones','Teeth','Muscle function']},
+{f:'Mg',n:'Magnesium',e:['Mg'],cnt:{Mg:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'1090°C',mp:'650°C',ft:['🔥', '⚡', '🌱'],ff:'Burns with bright white light!',sn:'Alkaline earth metal.',fr:'',sr:'',u:['Muscle function','Energy','Bones']},
+{f:'K',n:'Potassium',e:['K'],cnt:{K:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'759°C',mp:'63°C',ft:['🔥', '⚡', '🌱'],ff:'Explodes in water!',sn:'Alkali metal.',fr:'',sr:'',u:['Nerve function','Heart','Muscle']},
+{f:'Na',n:'Sodium',e:['Na'],cnt:{Na:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'883°C',mp:'98°C',ft:['🔥', '⚡', '🌱'],ff:'Also explodes in water!',sn:'Alkali metal.',fr:'',sr:'',u:['Nerve function','Fluid balance','Salt']},
+{f:'Fe',n:'Iron',e:['Fe'],cnt:{Fe:1},cat:'Metals & Alloys',d:1,s:'Solid',pH:'N/A',bp:'2862°C',mp:'1538°C',ft:['⚡', '🌱'],ff:'Carries oxygen in your blood!',sn:'Transition metal.',fr:'',sr:'',u:['Blood','Construction','Tools']},
+{f:'Zn',n:'Zinc',e:['Zn'],cnt:{Zn:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'907°C',mp:'420°C',ft:['🌱'],ff:'Helps fight colds!',sn:'Transition metal.',fr:'',sr:'',u:['Immune system','Galvanizing','Brass']},
+{f:'Cu',n:'Copper',e:['Cu'],cnt:{Cu:1},cat:'Metals & Alloys',d:1,s:'Solid',pH:'N/A',bp:'2562°C',mp:'1085°C',ft:['🌱'],ff:'Great conductor of electricity!',sn:'Transition metal.',fr:'',sr:'',u:['Wiring','Plumbing','Coins']},
+{f:'Ag',n:'Silver',e:['Ag'],cnt:{Ag:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'2162°C',mp:'962°C',ft:[],ff:'Best conductor of electricity!',sn:'Precious metal.',fr:'',sr:'',u:['Jewelry','Electronics','Coins']},
+{f:'Au',n:'Gold',e:['Au'],cnt:{Au:1},cat:'Metals & Alloys',d:1,s:'Solid',pH:'N/A',bp:'2856°C',mp:'1064°C',ft:[],ff:'Doesn\'t rust or tarnish!',sn:'Noble metal.',fr:'',sr:'',u:['Jewelry','Electronics','Investment']},
+{f:'Pt',n:'Platinum',e:['Pt'],cnt:{Pt:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'3825°C',mp:'1768°C',ft:[],ff:'Rarer than gold!',sn:'Precious metal.',fr:'',sr:'',u:['Jewelry','Catalytic converters','Chemistry']},
+{f:'Ti',n:'Titanium',e:['Ti'],cnt:{Ti:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'3287°C',mp:'1668°C',ft:[],ff:'Strong as steel but lighter!',sn:'Transition metal.',fr:'',sr:'',u:['Aerospace','Medical implants','Sports']},
+{f:'Al',n:'Aluminum',e:['Al'],cnt:{Al:1},cat:'Metals & Alloys',d:1,s:'Solid',pH:'N/A',bp:'2519°C',mp:'660°C',ft:[],ff:'Most abundant metal in Earth\'s crust!',sn:'Post-transition metal.',fr:'',sr:'',u:['Cans','Foil','Aircraft']},
+{f:'Pb',n:'Lead',e:['Pb'],cnt:{Pb:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'1749°C',mp:'327°C',ft:['☠️'],ff:'⚠️ Toxic - especially for kids!',sn:'Heavy metal.',fr:'',sr:'',u:['Batteries','Radiation shielding','Weights']},
+{f:'Hg',n:'Mercury',e:['Hg'],cnt:{Hg:1},cat:'Metals & Alloys',d:3,s:'Liquid',pH:'N/A',bp:'357°C',mp:'-39°C',ft:['☠️'],ff:'Only liquid metal at room temperature!',sn:'Heavy metal.',fr:'',sr:'',u:['Thermometers','Barometers','Electrical']},
+{f:'Sn',n:'Tin',e:['Sn'],cnt:{Sn:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'2602°C',mp:'232°C',ft:[],ff:'Used to coat steel cans!',sn:'Post-transition metal.',fr:'',sr:'',u:['Cans','Solder','Bronze']},
+{f:'Ni',n:'Nickel',e:['Ni'],cnt:{Ni:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'2913°C',mp:'1455°C',ft:[],ff:'Some people are allergic to it!',sn:'Transition metal.',fr:'',sr:'',u:['Coins','Stainless steel','Batteries']},
+{f:'Cr',n:'Chromium',e:['Cr'],cnt:{Cr:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'2671°C',mp:'1907°C',ft:['🌱'],ff:'Makes steel stainless!',sn:'Transition metal.',fr:'',sr:'',u:['Stainless steel','Plating','Pigments']},
+{f:'Mn',n:'Manganese',e:['Mn'],cnt:{Mn:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'2061°C',mp:'1246°C',ft:['🌱'],ff:'Important for bone health!',sn:'Transition metal.',fr:'',sr:'',u:['Steel production','Batteries','Biology']},
+{f:'Co',n:'Cobalt',e:['Co'],cnt:{Co:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'2927°C',mp:'1495°C',ft:['🌱'],ff:'In Vitamin B12!',sn:'Transition metal.',fr:'',sr:'',u:['Batteries','Magnets','Vitamin B12']},
+{f:'W',n:'Tungsten',e:['W'],cnt:{W:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'5555°C',mp:'3422°C',ft:[],ff:'Highest melting point of all metals!',sn:'Transition metal.',fr:'',sr:'',u:['Light bulbs','Tools','Electronics']},
+{f:'V',n:'Vanadium',e:['V'],cnt:{V:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'3407°C',mp:'1910°C',ft:[],ff:'Makes steel stronger!',sn:'Transition metal.',fr:'',sr:'',u:['Steel alloy','Tools','Chemistry']},
+{f:'Li',n:'Lithium',e:['Li'],cnt:{Li:1},cat:'Metals & Alloys',d:2,s:'Solid',pH:'N/A',bp:'1342°C',mp:'181°C',ft:['🔥', '⚡'],ff:'Lightest metal!',sn:'Alkali metal.',fr:'',sr:'',u:['Batteries','Medicine','Aircraft']},
+{f:'Be',n:'Beryllium',e:['Be'],cnt:{Be:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'2469°C',mp:'1287°C',ft:['☠️'],ff:'⚠️ Toxic - causes lung disease!',sn:'Alkaline earth metal.',fr:'',sr:'',u:['Aerospace','X-ray windows','Alloys']},
+{f:'B',n:'Boron',e:['B'],cnt:{B:1},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'4000°C',mp:'2076°C',ft:['🌱'],ff:'Plants need it to grow!',sn:'Metalloid.',fr:'',sr:'',u:['Glass','Detergents','Plant growth']},
+{f:'Si',n:'Silicon',e:['Si'],cnt:{Si:1},cat:'Minerals',d:2,s:'Solid',pH:'N/A',bp:'3265°C',mp:'1414°C',ft:[],ff:'Basis of all electronics!',sn:'Metalloid.',fr:'',sr:'',u:['Computer chips','Glass','Solar panels']},
+{f:'P',n:'Phosphorus',e:['P'],cnt:{P:1},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'280°C',mp:'44°C',ft:['☠️', '🔥', '⚡', '🌱'],ff:'Glow in the dark!',sn:'Nonmetal.',fr:'',sr:'',u:['Fertilizer','Matches','DNA']},
+{f:'S',n:'Sulfur',e:['S'],cnt:{S:1},cat:'Minerals',d:2,s:'Solid',pH:'N/A',bp:'445°C',mp:'115°C',ft:['🔥', '⚡', '🌱'],ff:'Smells like rotten eggs when burned!',sn:'Nonmetal.',fr:'',sr:'',u:['Fertilizer','Gunpowder','Medicine']},
+{f:'Se',n:'Selenium',e:['Se'],cnt:{Se:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'685°C',mp:'221°C',ft:['🌱'],ff:'Important antioxidant!',sn:'Nonmetal.',fr:'',sr:'',u:['Electronics','Glass','Nutrition']},
+{f:'As',n:'Arsenic',e:['As'],cnt:{As:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'613°C',mp:'817°C',ft:['☠️'],ff:'⚠️ Famous historical poison!',sn:'Metalloid.',fr:'',sr:'',u:['Semiconductors','Wood preservation','Historical poison']},
+{f:'Sb',n:'Antimony',e:['Sb'],cnt:{Sb:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'1587°C',mp:'631°C',ft:['☠️'],ff:'Used in ancient cosmetics!',sn:'Metalloid.',fr:'',sr:'',u:['Flame retardant','Alloys','Electronics']},
+{f:'Te',n:'Tellurium',e:['Te'],cnt:{Te:1},cat:'Minerals',d:5,s:'Solid',pH:'N/A',bp:'988°C',mp:'450°C',ft:['☠️'],ff:'Rare element!',sn:'Metalloid.',fr:'',sr:'',u:['Solar panels','Alloys','Electronics']},
+{f:'Ge',n:'Germanium',e:['Ge'],cnt:{Ge:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'2833°C',mp:'938°C',ft:[],ff:'Used in first transistors!',sn:'Metalloid.',fr:'',sr:'',u:['Semiconductors','Fiber optics','Infrared']},
+{f:'Ga',n:'Gallium',e:['Ga'],cnt:{Ga:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'2204°C',mp:'30°C',ft:[],ff:'Melts in your hand!',sn:'Post-transition metal.',fr:'',sr:'',u:['Electronics','LEDs','Thermometers']},
+{f:'In',n:'Indium',e:['In'],cnt:{In:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'2072°C',mp:'157°C',ft:[],ff:'Used in smartphone screens!',sn:'Post-transition metal.',fr:'',sr:'',u:['Touchscreens','Solder','Coatings']},
+{f:'Tl',n:'Thallium',e:['Tl'],cnt:{Tl:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'1473°C',mp:'304°C',ft:['☠️'],ff:'⚠️ Highly toxic!',sn:'Post-transition metal.',fr:'',sr:'',u:['Electronics','Medical imaging','Historical poison']},
+{f:'Bi',n:'Bismuth',e:['Bi'],cnt:{Bi:1},cat:'Metals & Alloys',d:3,s:'Solid',pH:'N/A',bp:'1564°C',mp:'271°C',ft:[],ff:'Forms rainbow crystals!',sn:'Post-transition metal.',fr:'',sr:'',u:['Medicine','Cosmetics','Alloys']},
+{f:'Po',n:'Polonium',e:['Po'],cnt:{Po:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'962°C',mp:'254°C',ft:['☠️'],ff:'⚠️ Highly radioactive!',sn:'Radioactive element.',fr:'',sr:'',u:['Research','Static elimination','Historical']},
+{f:'At',n:'Astatine',e:['At'],cnt:{At:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'337°C',mp:'302°C',ft:['☠️', '⚡'],ff:'Rarest natural element!',sn:'Radioactive halogen.',fr:'',sr:'',u:['Research','Medical']},
+{f:'Fr',n:'Francium',e:['Fr'],cnt:{Fr:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'677°C',mp:'27°C',ft:['☠️', '⚡'],ff:'Most reactive alkali metal!',sn:'Radioactive alkali metal.',fr:'',sr:'',u:['Research']},
+{f:'Ra',n:'Radium',e:['Ra'],cnt:{Ra:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'1737°C',mp:'700°C',ft:['☠️', '⚡'],ff:'⚠️ Glows and is radioactive!',sn:'Radioactive alkaline earth metal.',fr:'',sr:'',u:['Historical','Medical','Research']},
+{f:'Ac',n:'Actinium',e:['Ac'],cnt:{Ac:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'3198°C',mp:'1051°C',ft:['☠️', '⚡'],ff:'Radioactive element!',sn:'Actinide series.',fr:'',sr:'',u:['Research','Medical']},
+{f:'U',n:'Uranium',e:['U'],cnt:{U:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'4131°C',mp:'1135°C',ft:['☠️', '⚡'],ff:'⚠️ Powers nuclear reactors!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Nuclear fuel','Weapons','Research']},
+{f:'Pu',n:'Plutonium',e:['Pu'],cnt:{Pu:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'3228°C',mp:'640°C',ft:['☠️', '⚡'],ff:'⚠️ Used in nuclear bombs!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Nuclear weapons','Spacecraft power','Research']},
+{f:'Np',n:'Neptunium',e:['Np'],cnt:{Np:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'4000°C',mp:'644°C',ft:['☠️', '⚡'],ff:'Named after Neptune!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research','Neutron detection']},
+{f:'Am',n:'Americium',e:['Am'],cnt:{Am:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'2607°C',mp:'1176°C',ft:['☠️', '⚡'],ff:'In your smoke detector!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Smoke detectors','Research']},
+{f:'Cm',n:'Curium',e:['Cm'],cnt:{Cm:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'3110°C',mp:'1345°C',ft:['☠️', '⚡'],ff:'Named after Marie Curie!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research','Spacecraft power']},
+{f:'Bk',n:'Berkelium',e:['Bk'],cnt:{Bk:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'2627°C',mp:'1050°C',ft:['☠️', '⚡'],ff:'Named after Berkeley, California!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'Cf',n:'Californium',e:['Cf'],cnt:{Cf:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'1743°C',mp:'900°C',ft:['☠️', '⚡'],ff:'Named after California!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Neutron source','Research']},
+{f:'Es',n:'Einsteinium',e:['Es'],cnt:{Es:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'1269°C',mp:'860°C',ft:['☠️', '⚡'],ff:'Named after Einstein!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'Fm',n:'Fermium',e:['Fm'],cnt:{Fm:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'1527°C',ft:['☠️', '⚡'],ff:'Named after Enrico Fermi!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'Md',n:'Mendelevium',e:['Md'],cnt:{Md:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'827°C',ft:['☠️', '⚡'],ff:'Named after Mendeleev (periodic table)!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'No',n:'Nobelium',e:['No'],cnt:{No:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'827°C',ft:['☠️', '⚡'],ff:'Named after Nobel Prize!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'Lr',n:'Lawrencium',e:['Lr'],cnt:{Lr:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'1627°C',ft:['☠️', '⚡'],ff:'Named after Lawrence (cyclotron)!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'Rf',n:'Rutherfordium',e:['Rf'],cnt:{Rf:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Rutherford!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Db',n:'Dubnium',e:['Db'],cnt:{Db:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Dubna, Russia!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Sg',n:'Seaborgium',e:['Sg'],cnt:{Sg:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Seaborg!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Bh',n:'Bohrium',e:['Bh'],cnt:{Bh:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Bohr!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Hs',n:'Hassium',e:['Hs'],cnt:{Hs:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Hesse, Germany!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Mt',n:'Meitnerium',e:['Mt'],cnt:{Mt:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Meitner!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Ds',n:'Darmstadtium',e:['Ds'],cnt:{Ds:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Darmstadt, Germany!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Rg',n:'Roentgenium',e:['Rg'],cnt:{Rg:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Röntgen (X-rays)!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Cn',n:'Copernicium',e:['Cn'],cnt:{Cn:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Copernicus!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Nh',n:'Nihonium',e:['Nh'],cnt:{Nh:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Japan (Nihon)!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Fl',n:'Flerovium',e:['Fl'],cnt:{Fl:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Flerov!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Mc',n:'Moscovium',e:['Mc'],cnt:{Mc:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Moscow!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Lv',n:'Livermorium',e:['Lv'],cnt:{Lv:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Livermore Lab!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Ts',n:'Tennessine',e:['Ts'],cnt:{Ts:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Named after Tennessee!',sn:'Synthetic element.',fr:'',sr:'',u:['Research']},
+{f:'Og',n:'Oganesson',e:['Og'],cnt:{Og:1},cat:'Special',d:5,s:'Unknown',pH:'N/A',bp:'Unknown',mp:'Unknown',ft:['☠️', '⚡'],ff:'Heaviest element known!',sn:'Synthetic noble gas.',fr:'',sr:'',u:['Research']},
+{f:'Pm',n:'Promethium',e:['Pm'],cnt:{Pm:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'3000°C',mp:'1042°C',ft:['☠️', '⚡'],ff:'Only radioactive lanthanide!',sn:'Radioactive lanthanide.',fr:'',sr:'',u:['Nuclear batteries','Research']},
+{f:'Tc',n:'Technetium',e:['Tc'],cnt:{Tc:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'4265°C',mp:'2157°C',ft:['☠️'],ff:'First synthetic element!',sn:'Radioactive transition metal.',fr:'',sr:'',u:['Medical imaging','Research']},
+{f:'Sc',n:'Scandium',e:['Sc'],cnt:{Sc:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'2836°C',mp:'1541°C',ft:[],ff:'Used in high-end bike frames!',sn:'Transition metal.',fr:'',sr:'',u:['Aerospace','Sports equipment','Lights']},
+{f:'Y',n:'Yttrium',e:['Y'],cnt:{Y:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'3345°C',mp:'1522°C',ft:[],ff:'Used in red TV phosphors!',sn:'Transition metal.',fr:'',sr:'',u:['LEDs','Superconductors','Lasers']},
+{f:'Zr',n:'Zirconium',e:['Zr'],cnt:{Zr:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'4409°C',mp:'1855°C',ft:[],ff:'Used in nuclear fuel rods!',sn:'Transition metal.',fr:'',sr:'',u:['Nuclear reactors','Ceramics','Jewelry']},
+{f:'Nb',n:'Niobium',e:['Nb'],cnt:{Nb:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'4744°C',mp:'2477°C',ft:[],ff:'Used in superconducting magnets!',sn:'Transition metal.',fr:'',sr:'',u:['Superconductors','Steel alloy','Jewelry']},
+{f:'Mo',n:'Molybdenum',e:['Mo'],cnt:{Mo:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'4639°C',mp:'2623°C',ft:['🌱'],ff:'Essential trace element!',sn:'Transition metal.',fr:'',sr:'',u:['Steel alloy','Enzymes','Lubricants']},
+{f:'Ru',n:'Ruthenium',e:['Ru'],cnt:{Ru:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'4150°C',mp:'2334°C',ft:[],ff:'Used in hard drive platters!',sn:'Platinum group metal.',fr:'',sr:'',u:['Electronics','Catalysts','Jewelry']},
+{f:'Rh',n:'Rhodium',e:['Rh'],cnt:{Rh:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'3695°C',mp:'1964°C',ft:[],ff:'More expensive than gold!',sn:'Platinum group metal.',fr:'',sr:'',u:['Catalytic converters','Jewelry','Electronics']},
+{f:'Pd',n:'Palladium',e:['Pd'],cnt:{Pd:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'2963°C',mp:'1555°C',ft:[],ff:'Absorbs 900x its volume in hydrogen!',sn:'Platinum group metal.',fr:'',sr:'',u:['Catalytic converters','Jewelry','Electronics']},
+{f:'Os',n:'Osmium',e:['Os'],cnt:{Os:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'5012°C',mp:'3033°C',ft:['☠️'],ff:'Densest natural element!',sn:'Platinum group metal.',fr:'',sr:'',u:['Fountain pen tips','Electrical contacts','Alloys']},
+{f:'Ir',n:'Iridium',e:['Ir'],cnt:{Ir:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'4428°C',mp:'2446°C',ft:[],ff:'Most corrosion-resistant metal!',sn:'Platinum group metal.',fr:'',sr:'',u:['Spark plugs','Crucibles','Pen tips']},
+{f:'Re',n:'Rhenium',e:['Re'],cnt:{Re:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'5596°C',mp:'3186°C',ft:[],ff:'One of the rarest elements!',sn:'Transition metal.',fr:'',sr:'',u:['Jet engines','Thermocouples','Catalysts']},
+{f:'Hf',n:'Hafnium',e:['Hf'],cnt:{Hf:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'4603°C',mp:'2233°C',ft:[],ff:'Used in nuclear reactors!',sn:'Transition metal.',fr:'',sr:'',u:['Nuclear control rods','Electronics','Alloys']},
+{f:'Ta',n:'Tantalum',e:['Ta'],cnt:{Ta:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'5458°C',mp:'3017°C',ft:[],ff:'In every smartphone!',sn:'Transition metal.',fr:'',sr:'',u:['Electronics','Capacitors','Medical']},
+{f:'La',n:'Lanthanum',e:['La'],cnt:{La:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'3464°C',mp:'920°C',ft:['⚡'],ff:'Used in night vision goggles!',sn:'Lanthanide.',fr:'',sr:'',u:['Camera lenses','Hybrid batteries','Lighting']},
+{f:'Ce',n:'Cerium',e:['Ce'],cnt:{Ce:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'3443°C',mp:'795°C',ft:['⚡'],ff:'In lighter flints!',sn:'Lanthanide.',fr:'',sr:'',u:['Lighter flints','Glass polishing','Catalysts']},
+{f:'Pr',n:'Praseodymium',e:['Pr'],cnt:{Pr:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'3520°C',mp:'935°C',ft:['⚡'],ff:'Makes green glass!',sn:'Lanthanide.',fr:'',sr:'',u:['Magnets','Glass coloring','Lasers']},
+{f:'Nd',n:'Neodymium',e:['Nd'],cnt:{Nd:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'3074°C',mp:'1024°C',ft:['⚡'],ff:'Makes strongest permanent magnets!',sn:'Lanthanide.',fr:'',sr:'',u:['Strong magnets','Lasers','Glass']},
+{f:'Sm',n:'Samarium',e:['Sm'],cnt:{Sm:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'1794°C',mp:'1072°C',ft:[],ff:'Used in samarium-cobalt magnets!',sn:'Lanthanide.',fr:'',sr:'',u:['Magnets','Nuclear reactors','Lasers']},
+{f:'Eu',n:'Europium',e:['Eu'],cnt:{Eu:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'1529°C',mp:'826°C',ft:['⚡'],ff:'Makes red color in TVs!',sn:'Lanthanide.',fr:'',sr:'',u:['TV phosphors','LEDs','Lasers']},
+{f:'Gd',n:'Gadolinium',e:['Gd'],cnt:{Gd:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'3273°C',mp:'1313°C',ft:[],ff:'Used in MRI scans!',sn:'Lanthanide.',fr:'',sr:'',u:['MRI contrast','Magnets','Nuclear']},
+{f:'Tb',n:'Terbium',e:['Tb'],cnt:{Tb:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'3230°C',mp:'1356°C',ft:[],ff:'Makes green in displays!',sn:'Lanthanide.',fr:'',sr:'',u:['Green phosphors','Magnets','Lasers']},
+{f:'Dy',n:'Dysprosium',e:['Dy'],cnt:{Dy:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'2567°C',mp:'1412°C',ft:[],ff:'Used in hard drives!',sn:'Lanthanide.',fr:'',sr:'',u:['Magnets','Lasers','Nuclear']},
+{f:'Ho',n:'Holmium',e:['Ho'],cnt:{Ho:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'2720°C',mp:'1461°C',ft:[],ff:'Has highest magnetic moment!',sn:'Lanthanide.',fr:'',sr:'',u:['Magnets','Lasers','Nuclear']},
+{f:'Er',n:'Erbium',e:['Er'],cnt:{Er:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'2868°C',mp:'1529°C',ft:[],ff:'Makes pink glass!',sn:'Lanthanide.',fr:'',sr:'',u:['Fiber optics','Lasers','Glass']},
+{f:'Tm',n:'Thulium',e:['Tm'],cnt:{Tm:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'1950°C',mp:'1545°C',ft:[],ff:'Rarest lanthanide!',sn:'Lanthanide.',fr:'',sr:'',u:['Lasers','X-ray','Nuclear']},
+{f:'Yb',n:'Ytterbium',e:['Yb'],cnt:{Yb:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'1196°C',mp:'824°C',ft:[],ff:'Named after Ytterby, Sweden!',sn:'Lanthanide.',fr:'',sr:'',u:['Lasers','Steel','Atomic clocks']},
+{f:'Lu',n:'Lutetium',e:['Lu'],cnt:{Lu:1},cat:'Metals & Alloys',d:5,s:'Solid',pH:'N/A',bp:'3402°C',mp:'1652°C',ft:[],ff:'Last lanthanide!',sn:'Lanthanide.',fr:'',sr:'',u:['PET scans','Catalysts','LEDs']},
+{f:'Th',n:'Thorium',e:['Th'],cnt:{Th:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'4788°C',mp:'1750°C',ft:['☠️', '⚡'],ff:'Potential nuclear fuel!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Nuclear fuel','Welding','Lanterns']},
+{f:'Pa',n:'Protactinium',e:['Pa'],cnt:{Pa:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'4000°C',mp:'1572°C',ft:['☠️', '⚡'],ff:'Very rare and radioactive!',sn:'Radioactive actinide.',fr:'',sr:'',u:['Research']},
+{f:'La₂O₃',n:'Lanthanum Oxide',e:['La','O'],cnt:{La:2,O:3},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'N/A',mp:'2315°C',ft:[],ff:'Used in camera lenses!',sn:'Rare earth oxide.',fr:'',sr:'',u:['Glass','Catalysts','Optics']},
+{f:'CeO₂',n:'Cerium Oxide',e:['Ce','O'],cnt:{Ce:1,O:2},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'N/A',mp:'2400°C',ft:[],ff:'Polishes glass perfectly!',sn:'Rare earth oxide.',fr:'',sr:'',u:['Glass polishing','Catalysts','Fuel cells']},
+{f:'Nd₂Fe₁₄B',n:'Neodymium Magnet',e:['Nd','Fe','B'],cnt:{Nd:2,Fe:14,B:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'N/A',mp:'N/A',ft:[],ff:'Strongest permanent magnets!',sn:'Rare earth magnet.',fr:'',sr:'',u:['Magnets','Motors','Hard drives']},
+{f:'KCl',n:'Potassium Chloride',e:['K','Cl'],cnt:{K:1,Cl:1},cat:'Common Household',d:2,s:'Solid',pH:'7.0',bp:'1420°C',mp:'770°C',ft:['🌱'],ff:'Low-sodium salt alternative!',sn:'Ionic compound.',fr:'Заменитель соли с низким натрием!',sr:'Ионное соединение.',u:['Salt substitute','Fertilizer','Medicine']},
+{f:'MgSO₄',n:'Magnesium Sulfate',e:['Mg','S','O'],cnt:{Mg:1,S:1,O:4},cat:'Medicine',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'1124°C',ft:[],ff:'Epsom salt for baths!',sn:'Hydrated form is Epsom salt.',fr:'',sr:'',u:['Epsom salt','Bath','Medicine']},
+{f:'CaCl₂',n:'Calcium Chloride',e:['Ca','Cl'],cnt:{Ca:1,Cl:2},cat:'Common Household',d:2,s:'Solid',pH:'N/A',bp:'1935°C',mp:'772°C',ft:['⚡'],ff:'Melts ice better than salt!',sn:'Absorbs water from air.',fr:'Лучше плавит лёд, чем соль!',sr:'Поглощает воду из воздуха.',u:['De-icing','Drying agent','Food']},
+{f:'Na₃PO₄',n:'Sodium Phosphate',e:['Na','P','O'],cnt:{Na:3,P:1,O:4},cat:'Common Household',d:3,s:'Solid',pH:'12.0',bp:'Decomposes',mp:'1670°C',ft:['⚡'],ff:'In some cleaning products!',sn:'Phosphate compound.',fr:'',sr:'',u:['Cleaning','Water treatment','Food']},
+{f:'NH₄NO₃',n:'Ammonium Nitrate',e:['N','H','O'],cnt:{N:2,H:4,O:3},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'169°C',ft:['⚡'],ff:'⚠️ Used in fertilizers and explosives!',sn:'Oxidizer.',fr:'',sr:'',u:['Fertilizer','Explosives','Cold packs']},
+{f:'KNO₃',n:'Potassium Nitrate',e:['K','N','O'],cnt:{K:1,N:1,O:3},cat:'Special',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'334°C',ft:['⚡'],ff:'Key ingredient in gunpowder!',sn:'Oxidizer.',fr:'Ключевой ингредиент пороха!',sr:'Окислитель.',u:['Gunpowder','Fertilizer','Food preservation']},
+{f:'NaNO₃',n:'Sodium Nitrate',e:['Na','N','O'],cnt:{Na:1,N:1,O:3},cat:'Special',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'308°C',ft:['⚡'],ff:'Chile saltpeter!',sn:'Nitrate compound.',fr:'',sr:'',u:['Fertilizer','Food preservation','Explosives']},
+{f:'Ca₃(PO₄)₂',n:'Calcium Phosphate',e:['P','O','Ca'],cnt:{P:2,O:8,Ca:3},cat:'Biology',d:4,s:'Solid',pH:'N/A',bp:'N/A',mp:'1670°C',ft:['🌱'],ff:'Main mineral in bones!',sn:'Bone mineral.',fr:'',sr:'',u:['Bones','Teeth','Fertilizer']},
+{f:'FeSO₄',n:'Iron Sulfate',e:['Fe','S','O'],cnt:{Fe:1,S:1,O:4},cat:'Medicine',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'680°C',ft:[],ff:'Treats iron deficiency!',sn:'Iron compound.',fr:'',sr:'',u:['Iron supplement','Water treatment','Garden']},
+{f:'CuSO₄',n:'Copper Sulfate',e:['Cu','S','O'],cnt:{Cu:1,S:1,O:4},cat:'Common Household',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'110°C',ft:['☠️'],ff:'Beautiful blue crystals!',sn:'Copper compound.',fr:'',sr:'',u:['Algaecide','Chemistry','Agriculture']},
+{f:'ZnO',n:'Zinc Oxide',e:['Zn','O'],cnt:{Zn:1,O:1},cat:'Medicine',d:2,s:'Solid',pH:'N/A',bp:'1975°C',mp:'1975°C',ft:[],ff:'In sunscreen to block UV!',sn:'Zinc compound.',fr:'В солнцезащитных кремах!',sr:'Соединение цинка.',u:['Sunscreen','Diaper cream','Rubber']},
+{f:'TiO₂',n:'Titanium Dioxide',e:['Ti','O'],cnt:{Ti:1,O:2},cat:'Common Household',d:3,s:'Solid',pH:'N/A',bp:'2972°C',mp:'1843°C',ft:[],ff:'Makes things white!',sn:'White pigment.',fr:'Делает вещи белыми!',sr:'Белый пигмент.',u:['Sunscreen','Paint','Food coloring']},
+{f:'BaSO₄',n:'Barium Sulfate',e:['Ba','S','O'],cnt:{Ba:1,S:1,O:4},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'1580°C',ft:[],ff:'Used in X-ray imaging!',sn:'Barium compound.',fr:'',sr:'',u:['X-ray contrast','Paint','Medical']},
+{f:'Li₂CO₃',n:'Lithium Carbonate',e:['Li','C','O'],cnt:{Li:2,C:1,O:3},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'723°C',ft:[],ff:'Treats bipolar disorder!',sn:'Lithium compound.',fr:'',sr:'',u:['Bipolar medication','Batteries','Glass']},
+{f:'AgNO₃',n:'Silver Nitrate',e:['Ag','N','O'],cnt:{Ag:1,N:1,O:3},cat:'Medicine',d:4,s:'Solid',pH:'N/A',bp:'444°C',mp:'212°C',ft:['☠️', '⚡'],ff:'Turns skin black in sunlight!',sn:'Silver compound.',fr:'',sr:'',u:['Photography','Antiseptic','Chemistry']},
+{f:'AuCl₃',n:'Gold Chloride',e:['Au','Cl'],cnt:{Au:1,Cl:3},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'254°C',ft:['☠️', '⚡'],ff:'Gold compound!',sn:'Gold compound.',fr:'',sr:'',u:['Chemistry','Electronics','Medicine']},
+{f:'PtCl₄',n:'Platinum Chloride',e:['Pt','Cl'],cnt:{Pt:1,Cl:4},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'370°C',ft:['☠️', '⚡'],ff:'Platinum compound!',sn:'Platinum compound.',fr:'',sr:'',u:['Chemistry','Catalysts','Medicine']},
+{f:'NiSO₄',n:'Nickel Sulfate',e:['Ni','S','O'],cnt:{Ni:1,S:1,O:4},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'100°C',ft:['☠️'],ff:'Some people are allergic!',sn:'Nickel compound.',fr:'',sr:'',u:['Electroplating','Batteries','Chemistry']},
+{f:'Cr₂O₃',n:'Chromium Oxide',e:['Cr','O'],cnt:{Cr:2,O:3},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'4000°C',mp:'2435°C',ft:[],ff:'Green pigment!',sn:'Chromium compound.',fr:'',sr:'',u:['Pigment','Polishing','Ceramics']},
+{f:'MnO₂',n:'Manganese Oxide',e:['Mn','O'],cnt:{Mn:1,O:2},cat:'Minerals',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'535°C',ft:[],ff:'In dry cell batteries!',sn:'Manganese compound.',fr:'',sr:'',u:['Batteries','Catalyst','Glass']},
+{f:'Co₃O₄',n:'Cobalt Oxide',e:['Co','O'],cnt:{Co:3,O:4},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'N/A',ft:[],ff:'Blue pigment!',sn:'Cobalt compound.',fr:'',sr:'',u:['Batteries','Pigment','Catalyst']},
+{f:'V₂O₅',n:'Vanadium Oxide',e:['V','O'],cnt:{V:2,O:5},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'1750°C',mp:'690°C',ft:['☠️'],ff:'Orange crystals!',sn:'Vanadium compound.',fr:'',sr:'',u:['Catalyst','Steel','Chemistry']},
+{f:'WC',n:'Tungsten Carbide',e:['W','C'],cnt:{W:1,C:1},cat:'Metals & Alloys',d:4,s:'Solid',pH:'N/A',bp:'6000°C',mp:'2870°C',ft:[],ff:'Almost as hard as diamond!',sn:'Hard material.',fr:'',sr:'',u:['Cutting tools','Drill bits','Jewelry']},
+{f:'SiC',n:'Silicon Carbide',e:['Si','C'],cnt:{Si:1,C:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'2730°C',ft:[],ff:'Moissanite gemstone!',sn:'Hard compound.',fr:'',sr:'',u:['Abrasive','Semiconductors','Jewelry']},
+{f:'BN',n:'Boron Nitride',e:['B','N'],cnt:{B:1,N:1},cat:'Minerals',d:5,s:'Solid',pH:'N/A',bp:'N/A',mp:'2973°C',ft:[],ff:'Called \'white graphite\'!',sn:'Boron compound.',fr:'',sr:'',u:['Lubricant','Ceramics','Cosmetics']},
+{f:'AlN',n:'Aluminum Nitride',e:['Al','N'],cnt:{Al:1,N:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'2200°C',mp:'2200°C',ft:[],ff:'Conducts heat well!',sn:'Aluminum compound.',fr:'',sr:'',u:['Electronics','Ceramics','Heat sinks']},
+{f:'GaAs',n:'Gallium Arsenide',e:['Ga','As'],cnt:{Ga:1,As:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'1238°C',mp:'1238°C',ft:['☠️'],ff:'Better than silicon for some chips!',sn:'Semiconductor.',fr:'',sr:'',u:['Semiconductors','LEDs','Solar cells']},
+{f:'InP',n:'Indium Phosphide',e:['In','P'],cnt:{In:1,P:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'N/A',mp:'1062°C',ft:['☠️'],ff:'Used in fiber optics!',sn:'Semiconductor.',fr:'',sr:'',u:['Fiber optics','Lasers','Solar cells']},
+{f:'CdS',n:'Cadmium Sulfide',e:['Cd','S'],cnt:{Cd:1,S:1},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'980°C',mp:'980°C',ft:['☠️'],ff:'⚠️ Toxic but makes yellow!',sn:'Cadmium compound.',fr:'',sr:'',u:['Pigment','Solar cells','Electronics']},
+{f:'PbS',n:'Lead Sulfide',e:['Pb','S'],cnt:{Pb:1,S:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'1281°C',mp:'1114°C',ft:['☠️'],ff:'Main lead ore!',sn:'Lead compound.',fr:'',sr:'',u:['Infrared detectors','Galena ore','Electronics']},
+{f:'ZnS',n:'Zinc Sulfide',e:['Zn','S'],cnt:{Zn:1,S:1},cat:'Minerals',d:4,s:'Solid',pH:'N/A',bp:'1185°C',mp:'1185°C',ft:[],ff:'Glows in the dark!',sn:'Zinc compound.',fr:'',sr:'',u:['Phosphors','Pigment','Optics']},
+{f:'SrCO₃',n:'Strontium Carbonate',e:['Sr','C','O'],cnt:{Sr:1,C:1,O:3},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'1497°C',ft:[],ff:'Makes red fireworks!',sn:'Strontium compound.',fr:'',sr:'',u:['Fireworks','Ceramics','Glass']},
+{f:'BaCO₃',n:'Barium Carbonate',e:['Ba','C','O'],cnt:{Ba:1,C:1,O:3},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'811°C',ft:['☠️'],ff:'⚠️ Makes green fireworks!',sn:'Barium compound.',fr:'',sr:'',u:['Fireworks','Rat poison','Ceramics']},
+{f:'CuCl₂',n:'Copper Chloride',e:['Cu','Cl'],cnt:{Cu:1,Cl:2},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'993°C',mp:'498°C',ft:['☠️'],ff:'Blue-green color!',sn:'Copper compound.',fr:'',sr:'',u:['Chemistry','Pyrotechnics','Catalyst']},
+{f:'Na₂SiO₃',n:'Sodium Silicate',e:['Na','Si','O'],cnt:{Na:2,Si:1,O:3},cat:'Common Household',d:3,s:'Solid',pH:'N/A',bp:'1088°C',mp:'1088°C',ft:[],ff:'Called \'water glass\'!',sn:'Silicate compound.',fr:'',sr:'',u:['Water glass','Detergent','Adhesive']},
+{f:'KMnO₄',n:'Potassium Permanganate',e:['K','Mn','O'],cnt:{K:1,Mn:1,O:4},cat:'Special',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'240°C',ft:['☠️', '⚡'],ff:'Deep purple crystals!',sn:'Strong oxidizer.',fr:'',sr:'',u:['Disinfectant','Chemistry','Water treatment']},
+{f:'HF',n:'Hydrogen Fluoride',e:['H','F'],cnt:{H:1,F:1},cat:'Special',d:5,s:'Liquid',pH:'N/A',bp:'20°C',mp:'-83°C',ft:['☠️', '⚡'],ff:'⚠️ Extremely dangerous - etches glass!',sn:'Weak acid but very dangerous.',fr:'',sr:'',u:['Etching glass','Chemical production','Petroleum']},
+{f:'H₃PO₄',n:'Phosphoric Acid',e:['H','P','O'],cnt:{H:3,P:1,O:4},cat:'Acids & Bases',d:3,s:'Liquid',pH:'1.5',bp:'158°C',mp:'42°C',ft:['⚡'],ff:'In cola drinks!',sn:'Triprotic acid.',fr:'',sr:'',u:['Cola drinks','Fertilizer','Rust remover']},
+{f:'HNO₃',n:'Nitric Acid',e:['H','N','O'],cnt:{H:1,N:1,O:3},cat:'Acids & Bases',d:4,s:'Liquid',pH:'1.0',bp:'83°C',mp:'-42°C',ft:['☠️', '⚡'],ff:'⚠️ Used to make explosives!',sn:'Strong acid.',fr:'',sr:'',u:['Fertilizer','Explosives','Chemical production']},
+{f:'HClO₄',n:'Perchloric Acid',e:['H','Cl','O'],cnt:{H:1,Cl:1,O:4},cat:'Acids & Bases',d:5,s:'Liquid',pH:'N/A',bp:'203°C',mp:'-112°C',ft:['☠️', '⚡'],ff:'⚠️ One of strongest acids!',sn:'Strongest acid.',fr:'',sr:'',u:['Chemistry','Rocket fuel','Analysis']},
+{f:'CH₂O₂',n:'Formic Acid',e:['C','H','O'],cnt:{C:1,H:2,O:2},cat:'Organic Compounds',d:3,s:'Liquid',pH:'N/A',bp:'101°C',mp:'8°C',ft:['☠️', '🔥', '⚡'],ff:'What makes ant bites hurt!',sn:'Simplest carboxylic acid.',fr:'',sr:'',u:['Ant venom','Preservative','Leather']},
+{f:'C₂H₂O₄',n:'Oxalic Acid',e:['C','H','O'],cnt:{C:2,H:2,O:4},cat:'Organic Compounds',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'189°C',ft:['☠️', '⚡'],ff:'In rhubarb leaves!',sn:'Dicarboxylic acid.',fr:'',sr:'',u:['Cleaning','Bleach','Rust remover']},
+{f:'C₄H₆O₆',n:'Tartaric Acid',e:['C','H','O'],cnt:{C:4,H:6,O:6},cat:'Food & Drink',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'171°C',ft:['⚡'],ff:'In cream of tartar!',sn:'Organic acid.',fr:'',sr:'',u:['Baking powder','Wine','Food']},
+{f:'C₄H₆O₅',n:'Malic Acid',e:['C','H','O'],cnt:{C:4,H:6,O:5},cat:'Food & Drink',d:3,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'131°C',ft:['⚡'],ff:'Makes apples taste sour!',sn:'Organic acid.',fr:'',sr:'',u:['Food flavoring','Candy','Drinks']},
+{f:'C₃H₆O₃',n:'Lactic Acid',e:['C','H','O'],cnt:{C:3,H:6,O:3},cat:'Biology',d:3,s:'Liquid',pH:'N/A',bp:'122°C',mp:'53°C',ft:['⚡'],ff:'Makes muscles sore after exercise!',sn:'Produced during anaerobic respiration.',fr:'',sr:'',u:['Muscle fatigue','Yogurt','Food']},
+{f:'C₄H₈O₂',n:'Butyric Acid',e:['C','H','O'],cnt:{C:4,H:8,O:2},cat:'Organic Compounds',d:4,s:'Liquid',pH:'N/A',bp:'163°C',mp:'-5°C',ft:['🔥'],ff:'Smells like vomit!',sn:'Carboxylic acid.',fr:'',sr:'',u:['Flavoring','Perfume','Chemical']},
+{f:'C₅H₁₀O₂',n:'Valeric Acid',e:['C','H','O'],cnt:{C:5,H:10,O:2},cat:'Organic Compounds',d:4,s:'Liquid',pH:'N/A',bp:'186°C',mp:'-34°C',ft:['🔥'],ff:'Strong unpleasant smell!',sn:'Carboxylic acid.',fr:'',sr:'',u:['Flavoring','Perfume','Chemical']},
+{f:'C₆H₁₂O₂',n:'Caproic Acid',e:['C','H','O'],cnt:{C:6,H:12,O:2},cat:'Organic Compounds',d:4,s:'Liquid',pH:'N/A',bp:'205°C',mp:'-3°C',ft:['🔥'],ff:'Smells like goats!',sn:'Carboxylic acid.',fr:'',sr:'',u:['Flavoring','Perfume','Chemical']},
+{f:'C₁₆H₃₂O₂',n:'Palmitic Acid',e:['C','H','O'],cnt:{C:16,H:32,O:2},cat:'Food & Drink',d:4,s:'Solid',pH:'N/A',bp:'351°C',mp:'63°C',ft:[],ff:'Common in palm oil!',sn:'Saturated fatty acid.',fr:'',sr:'',u:['Soap','Food','Cosmetics']},
+{f:'C₁₈H₃₆O₂',n:'Stearic Acid',e:['C','H','O'],cnt:{C:18,H:36,O:2},cat:'Food & Drink',d:4,s:'Solid',pH:'N/A',bp:'361°C',mp:'69°C',ft:[],ff:'In candles and soap!',sn:'Saturated fatty acid.',fr:'',sr:'',u:['Soap','Candles','Cosmetics']},
+{f:'C₁₈H₃₂O₂',n:'Linoleic Acid',e:['C','H','O'],cnt:{C:18,H:32,O:2},cat:'Food & Drink',d:5,s:'Liquid',pH:'N/A',bp:'230°C',mp:'-5°C',ft:['🌱'],ff:'Essential fatty acid!',sn:'Polyunsaturated fatty acid.',fr:'',sr:'',u:['Cooking oil','Health','Supplements']},
+{f:'C₁₈H₃₀O₂',n:'Linolenic Acid',e:['C','H','O'],cnt:{C:18,H:30,O:2},cat:'Food & Drink',d:5,s:'Liquid',pH:'N/A',bp:'230°C',mp:'-11°C',ft:['🌱'],ff:'Omega-3 fatty acid!',sn:'Polyunsaturated fatty acid.',fr:'',sr:'',u:['Omega-3','Health','Fish oil']},
+{f:'C₂₀H₃₂O₂',n:'Arachidonic Acid',e:['C','H','O'],cnt:{C:20,H:32,O:2},cat:'Biology',d:5,s:'Liquid',pH:'N/A',bp:'N/A',mp:'-49°C',ft:['🌱'],ff:'Important for brain function!',sn:'Polyunsaturated fatty acid.',fr:'',sr:'',u:['Inflammation','Brain','Cell membranes']},
+{f:'C₂₇H₄₆O',n:'Cholesterol',e:['C','H','O'],cnt:{C:27,H:46,O:1},cat:'Biology',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'148°C',ft:['🌱'],ff:'Your body needs it but too much is bad!',sn:'Sterol lipid.',fr:'',sr:'',u:['Cell membranes','Hormones','Vitamin D']},
+{f:'C₂₂H₃₂O₃',n:'Testosterone Propionate',e:['C','H','O'],cnt:{C:22,H:32,O:3},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'118°C',ft:[],ff:'Synthetic testosterone!',sn:'Steroid ester.',fr:'',sr:'',u:['Hormone therapy','Medical','Sports']},
+{f:'C₂₁H₃₀O₂',n:'Progesterone',e:['C','H','O'],cnt:{C:21,H:30,O:2},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'128°C',ft:['🌱'],ff:'Pregnancy hormone!',sn:'Steroid hormone.',fr:'',sr:'',u:['Pregnancy','Birth control','Medical']},
+{f:'C₂₁H₂₈O₅',n:'Cortisone',e:['C','H','O'],cnt:{C:21,H:28,O:5},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'222°C',ft:[],ff:'Reduces inflammation!',sn:'Steroid hormone.',fr:'',sr:'',u:['Anti-inflammatory','Medical','Allergies']},
+{f:'C₂₁H₂₆O₅',n:'Prednisone',e:['C','H','O'],cnt:{C:21,H:26,O:5},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'235°C',ft:[],ff:'Common steroid medication!',sn:'Synthetic corticosteroid.',fr:'',sr:'',u:['Anti-inflammatory','Immune suppression','Medical']},
+{f:'C₂₂H₂₉FO₅',n:'Dexamethasone',e:['C','H','F','O'],cnt:{C:22,H:29,F:1,O:5},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'258°C',ft:[],ff:'Strong anti-inflammatory!',sn:'Synthetic corticosteroid.',fr:'',sr:'',u:['Anti-inflammatory','Allergies','Medical']},
+{f:'C₁₇H₁₉NO₃',n:'Morphine',e:['C','H','N','O'],cnt:{C:17,H:19,N:1,O:3},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'254°C',ft:['☠️'],ff:'From opium poppy!',sn:'Opioid analgesic.',fr:'',sr:'',u:['Pain relief','Medical','Controlled']},
+{f:'C₁₈H₂₁NO₃',n:'Codeine',e:['C','H','N','O'],cnt:{C:18,H:21,N:1,O:3},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'155°C',ft:['☠️'],ff:'Weaker than morphine!',sn:'Opioid analgesic.',fr:'',sr:'',u:['Pain relief','Cough suppressant','Medical']},
+{f:'C₁₇H₂₁NO₄',n:'Cocaine',e:['C','H','N','O'],cnt:{C:17,H:21,N:1,O:4},cat:'Special',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'98°C',ft:['☠️'],ff:'⚠️ Illegal drug - controlled substance!',sn:'Stimulant alkaloid.',fr:'',sr:'',u:['Medical anesthetic','Controlled','Research']},
+{f:'C₁₀H₁₄N₂',n:'Nicotine',e:['C','H','N'],cnt:{C:10,H:14,N:2},cat:'Special',d:4,s:'Liquid',pH:'N/A',bp:'247°C',mp:'-79°C',ft:['☠️', '🔥'],ff:'⚠️ Addictive chemical in tobacco!',sn:'Alkaloid stimulant.',fr:'',sr:'',u:['Tobacco','Insecticide','Research']},
+{f:'C₇H₈N₄O₂',n:'Theobromine',e:['C','H','N','O'],cnt:{C:7,H:8,N:4,O:2},cat:'Food & Drink',d:4,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'357°C',ft:[],ff:'In chocolate - toxic to dogs!',sn:'Alkaloid.',fr:'',sr:'',u:['Chocolate','Vasodilator','Diuretic']},
+{f:'C₂₀H₂₄N₂O₂',n:'Quinine',e:['C','H','N','O'],cnt:{C:20,H:24,N:2,O:2},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'177°C',ft:[],ff:'In tonic water - glows under UV!',sn:'Alkaloid.',fr:'',sr:'',u:['Malaria','Tonic water','Medical']},
+{f:'C₁₇H₂₃NO₃',n:'Atropine',e:['C','H','N','O'],cnt:{C:17,H:23,N:1,O:3},cat:'Medicine',d:5,s:'Solid',pH:'N/A',bp:'Decomposes',mp:'115°C',ft:['☠️'],ff:'Used to dilate pupils!',sn:'Alkaloid.',fr:'',sr:'',u:['Eye drops','Antidote','Medical']},
+
+];
+
+// ── TRANSLATIONS ──
+const T = {
+  en: {
+    sub: 'University Edition · 267 Compounds',
+    found: 'Found', total: 'Total',
+    formula: 'Formula', reset: '✕ Reset',
+    hint: '👆 Click elements — click same element again to add more (Cl+Cl = Cl₂). Click glowing bar to open compounds.',
+    leg: ['Alkali','Alkaline Earth','Transition','Post-Trans.','Metalloid','Nonmetal','Halogen','Noble Gas'],
+    tipMatch: (n) => '✨ ' + n + ' match' + (n!==1?'es':'') + ' — click to view',
+    tipPoss:  (n) => n + ' reachable → click to preview',
+    tipNone:  'no match',
+    panelFound: (n) => '✨ ' + n + ' Found',
+    panelBuilding: (n) => 'Building… ' + n + ' possible',
+    keepAdding: 'Keep adding elements to complete a formula. Possible:',
+    keepAddingCard: 'keep adding elements to complete',
+    state: 'State', pH: 'pH', boiling: 'Boiling', melting: 'Melting',
+    stateMap: {Solid:'Solid',Liquid:'Liquid',Gas:'Gas','Gas/Liquid':'Gas/Liquid','Liquid/Solid':'Liquid/Solid',Unknown:'Unknown'},
+    catMap: {
+      'Common Household':'Common Household','Gases':'Gases','Acids & Bases':'Acids & Bases',
+      'Metals & Alloys':'Metals & Alloys','Organic Compounds':'Organic Compounds',
+      'Minerals':'Minerals','Biology':'Biology','Medicine':'Medicine',
+      'Food & Drink':'Food & Drink','Special':'Special'
+    },
+    all: (n) => 'All (' + n + ')',
+    tipEl: (n, cnt) => 'In ' + cnt + ' compound' + (cnt!==1?'s':''),
+    atomicNum: 'Atomic #',
+  },
+  ru: {
+    sub: 'Университетское издание · 267 соединений',
+    found: 'Найдено', total: 'Всего',
+    formula: 'Формула', reset: '✕ Сброс',
+    hint: '👆 Нажимайте элементы — повторное нажатие увеличивает счётчик (Cl+Cl = Cl₂). Нажмите светящуюся строку для просмотра.',
+    leg: ['Щелочной','Щелочноземельный','Переходный','Постпереход.','Металлоид','Неметалл','Галоген','Благородный газ'],
+    tipMatch: (n) => '✨ ' + n + ' совпад. — нажмите',
+    tipPoss:  (n) => n + ' вариантов → нажмите',
+    tipNone:  'нет совпадений',
+    panelFound: (n) => '✨ Найдено: ' + n,
+    panelBuilding: (n) => 'Строительство… ' + n + ' вар.',
+    keepAdding: 'Добавьте элементы для завершения формулы. Варианты:',
+    keepAddingCard: 'добавьте элементы для завершения',
+    state: 'Агрегатное состояние', pH: 'pH', boiling: 'Кипение', melting: 'Плавление',
+    stateMap: {Solid:'Твёрдое',Liquid:'Жидкость',Gas:'Газ','Gas/Liquid':'Газ/Жидкость','Liquid/Solid':'Жидкость/Твёрдое',Unknown:'Неизвестно'},
+    catMap: {
+      'Common Household':'Бытовые','Gases':'Газы','Acids & Bases':'Кислоты и основания',
+      'Metals & Alloys':'Металлы и сплавы','Organic Compounds':'Органические',
+      'Minerals':'Минералы','Biology':'Биология','Medicine':'Медицина',
+      'Food & Drink':'Еда и напитки','Special':'Особые'
+    },
+    all: (n) => 'Все (' + n + ')',
+    tipEl: (n, cnt) => 'В ' + cnt + ' соед.',
+    atomicNum: 'Атомный №',
+  }
+};
+
+const CATCFG={
+  'Common Household':{c:'#059669',bg:'rgba(5,150,105,.12)'},
+  'Gases':{c:'#2563eb',bg:'rgba(37,99,235,.12)'},
+  'Acids & Bases':{c:'#dc2626',bg:'rgba(220,38,38,.12)'},
+  'Metals & Alloys':{c:'#6b7280',bg:'rgba(107,114,128,.12)'},
+  'Organic Compounds':{c:'#d97706',bg:'rgba(217,119,6,.12)'},
+  'Minerals':{c:'#7c3aed',bg:'rgba(124,58,237,.12)'},
+  'Biology':{c:'#db2777',bg:'rgba(219,39,119,.12)'},
+  'Medicine':{c:'#0e7490',bg:'rgba(14,116,144,.12)'},
+  'Food & Drink':{c:'#16a34a',bg:'rgba(22,163,74,.12)'},
+  'Special':{c:'#92400e',bg:'rgba(146,64,14,.12)'},
+};
+const E=[{s:'H',n:'Hydrogen',an:1,c:'nonmetal',r:1,col:1},{s:'He',n:'Helium',an:2,c:'noble',r:1,col:18},{s:'Li',n:'Lithium',an:3,c:'alkali',r:2,col:1},{s:'Be',n:'Beryllium',an:4,c:'alkaline',r:2,col:2},{s:'B',n:'Boron',an:5,c:'metalloid',r:2,col:13},{s:'C',n:'Carbon',an:6,c:'nonmetal',r:2,col:14},{s:'N',n:'Nitrogen',an:7,c:'nonmetal',r:2,col:15},{s:'O',n:'Oxygen',an:8,c:'nonmetal',r:2,col:16},{s:'F',n:'Fluorine',an:9,c:'halogen',r:2,col:17},{s:'Ne',n:'Neon',an:10,c:'noble',r:2,col:18},{s:'Na',n:'Sodium',an:11,c:'alkali',r:3,col:1},{s:'Mg',n:'Magnesium',an:12,c:'alkaline',r:3,col:2},{s:'Al',n:'Aluminium',an:13,c:'post',r:3,col:13},{s:'Si',n:'Silicon',an:14,c:'metalloid',r:3,col:14},{s:'P',n:'Phosphorus',an:15,c:'nonmetal',r:3,col:15},{s:'S',n:'Sulfur',an:16,c:'nonmetal',r:3,col:16},{s:'Cl',n:'Chlorine',an:17,c:'halogen',r:3,col:17},{s:'Ar',n:'Argon',an:18,c:'noble',r:3,col:18},{s:'K',n:'Potassium',an:19,c:'alkali',r:4,col:1},{s:'Ca',n:'Calcium',an:20,c:'alkaline',r:4,col:2},{s:'Sc',n:'Scandium',an:21,c:'transition',r:4,col:3},{s:'Ti',n:'Titanium',an:22,c:'transition',r:4,col:4},{s:'V',n:'Vanadium',an:23,c:'transition',r:4,col:5},{s:'Cr',n:'Chromium',an:24,c:'transition',r:4,col:6},{s:'Mn',n:'Manganese',an:25,c:'transition',r:4,col:7},{s:'Fe',n:'Iron',an:26,c:'transition',r:4,col:8},{s:'Co',n:'Cobalt',an:27,c:'transition',r:4,col:9},{s:'Ni',n:'Nickel',an:28,c:'transition',r:4,col:10},{s:'Cu',n:'Copper',an:29,c:'transition',r:4,col:11},{s:'Zn',n:'Zinc',an:30,c:'transition',r:4,col:12},{s:'Ga',n:'Gallium',an:31,c:'post',r:4,col:13},{s:'Ge',n:'Germanium',an:32,c:'metalloid',r:4,col:14},{s:'As',n:'Arsenic',an:33,c:'metalloid',r:4,col:15},{s:'Se',n:'Selenium',an:34,c:'nonmetal',r:4,col:16},{s:'Br',n:'Bromine',an:35,c:'halogen',r:4,col:17},{s:'Kr',n:'Krypton',an:36,c:'noble',r:4,col:18},{s:'Rb',n:'Rubidium',an:37,c:'alkali',r:5,col:1},{s:'Sr',n:'Strontium',an:38,c:'alkaline',r:5,col:2},{s:'Y',n:'Yttrium',an:39,c:'transition',r:5,col:3},{s:'Zr',n:'Zirconium',an:40,c:'transition',r:5,col:4},{s:'Nb',n:'Niobium',an:41,c:'transition',r:5,col:5},{s:'Mo',n:'Molybdenum',an:42,c:'transition',r:5,col:6},{s:'Tc',n:'Technetium',an:43,c:'transition',r:5,col:7},{s:'Ru',n:'Ruthenium',an:44,c:'transition',r:5,col:8},{s:'Rh',n:'Rhodium',an:45,c:'transition',r:5,col:9},{s:'Pd',n:'Palladium',an:46,c:'transition',r:5,col:10},{s:'Ag',n:'Silver',an:47,c:'transition',r:5,col:11},{s:'Cd',n:'Cadmium',an:48,c:'transition',r:5,col:12},{s:'In',n:'Indium',an:49,c:'post',r:5,col:13},{s:'Sn',n:'Tin',an:50,c:'post',r:5,col:14},{s:'Sb',n:'Antimony',an:51,c:'metalloid',r:5,col:15},{s:'Te',n:'Tellurium',an:52,c:'metalloid',r:5,col:16},{s:'I',n:'Iodine',an:53,c:'halogen',r:5,col:17},{s:'Xe',n:'Xenon',an:54,c:'noble',r:5,col:18},{s:'Cs',n:'Cesium',an:55,c:'alkali',r:6,col:1},{s:'Ba',n:'Barium',an:56,c:'alkaline',r:6,col:2},{s:'La',n:'Lanthanum',an:57,c:'lanthanide',r:9,col:3},{s:'Ce',n:'Cerium',an:58,c:'lanthanide',r:9,col:4},{s:'Pr',n:'Praseodymium',an:59,c:'lanthanide',r:9,col:5},{s:'Nd',n:'Neodymium',an:60,c:'lanthanide',r:9,col:6},{s:'Pm',n:'Promethium',an:61,c:'lanthanide',r:9,col:7},{s:'Sm',n:'Samarium',an:62,c:'lanthanide',r:9,col:8},{s:'Eu',n:'Europium',an:63,c:'lanthanide',r:9,col:9},{s:'Gd',n:'Gadolinium',an:64,c:'lanthanide',r:9,col:10},{s:'Tb',n:'Terbium',an:65,c:'lanthanide',r:9,col:11},{s:'Dy',n:'Dysprosium',an:66,c:'lanthanide',r:9,col:12},{s:'Ho',n:'Holmium',an:67,c:'lanthanide',r:9,col:13},{s:'Er',n:'Erbium',an:68,c:'lanthanide',r:9,col:14},{s:'Tm',n:'Thulium',an:69,c:'lanthanide',r:9,col:15},{s:'Yb',n:'Ytterbium',an:70,c:'lanthanide',r:9,col:16},{s:'Lu',n:'Lutetium',an:71,c:'lanthanide',r:9,col:17},{s:'Hf',n:'Hafnium',an:72,c:'transition',r:6,col:4},{s:'Ta',n:'Tantalum',an:73,c:'transition',r:6,col:5},{s:'W',n:'Tungsten',an:74,c:'transition',r:6,col:6},{s:'Re',n:'Rhenium',an:75,c:'transition',r:6,col:7},{s:'Os',n:'Osmium',an:76,c:'transition',r:6,col:8},{s:'Ir',n:'Iridium',an:77,c:'transition',r:6,col:9},{s:'Pt',n:'Platinum',an:78,c:'transition',r:6,col:10},{s:'Au',n:'Gold',an:79,c:'transition',r:6,col:11},{s:'Hg',n:'Mercury',an:80,c:'transition',r:6,col:12},{s:'Tl',n:'Thallium',an:81,c:'post',r:6,col:13},{s:'Pb',n:'Lead',an:82,c:'post',r:6,col:14},{s:'Bi',n:'Bismuth',an:83,c:'post',r:6,col:15},{s:'Po',n:'Polonium',an:84,c:'metalloid',r:6,col:16},{s:'At',n:'Astatine',an:85,c:'halogen',r:6,col:17},{s:'Rn',n:'Radon',an:86,c:'noble',r:6,col:18},{s:'Fr',n:'Francium',an:87,c:'alkali',r:7,col:1},{s:'Ra',n:'Radium',an:88,c:'alkaline',r:7,col:2},{s:'Ac',n:'Actinium',an:89,c:'actinide',r:10,col:3},{s:'Th',n:'Thorium',an:90,c:'actinide',r:10,col:4},{s:'Pa',n:'Protactinium',an:91,c:'actinide',r:10,col:5},{s:'U',n:'Uranium',an:92,c:'actinide',r:10,col:6},{s:'Np',n:'Neptunium',an:93,c:'actinide',r:10,col:7},{s:'Pu',n:'Plutonium',an:94,c:'actinide',r:10,col:8},{s:'Am',n:'Americium',an:95,c:'actinide',r:10,col:9},{s:'Cm',n:'Curium',an:96,c:'actinide',r:10,col:10},{s:'Bk',n:'Berkelium',an:97,c:'actinide',r:10,col:11},{s:'Cf',n:'Californium',an:98,c:'actinide',r:10,col:12},{s:'Es',n:'Einsteinium',an:99,c:'actinide',r:10,col:13},{s:'Fm',n:'Fermium',an:100,c:'actinide',r:10,col:14},{s:'Md',n:'Mendelevium',an:101,c:'actinide',r:10,col:15},{s:'No',n:'Nobelium',an:102,c:'actinide',r:10,col:16},{s:'Lr',n:'Lawrencium',an:103,c:'actinide',r:10,col:17},{s:'Rf',n:'Rutherfordium',an:104,c:'transition',r:7,col:4},{s:'Db',n:'Dubnium',an:105,c:'transition',r:7,col:5},{s:'Sg',n:'Seaborgium',an:106,c:'transition',r:7,col:6},{s:'Bh',n:'Bohrium',an:107,c:'transition',r:7,col:7},{s:'Hs',n:'Hassium',an:108,c:'transition',r:7,col:8},{s:'Mt',n:'Meitnerium',an:109,c:'transition',r:7,col:9},{s:'Ds',n:'Darmstadtium',an:110,c:'transition',r:7,col:10},{s:'Rg',n:'Roentgenium',an:111,c:'transition',r:7,col:11},{s:'Cn',n:'Copernicium',an:112,c:'transition',r:7,col:12},{s:'Nh',n:'Nihonium',an:113,c:'post',r:7,col:13},{s:'Fl',n:'Flerovium',an:114,c:'post',r:7,col:14},{s:'Mc',n:'Moscovium',an:115,c:'post',r:7,col:15},{s:'Lv',n:'Livermorium',an:116,c:'post',r:7,col:16},{s:'Ts',n:'Tennessine',an:117,c:'halogen',r:7,col:17},{s:'Og',n:'Oganesson',an:118,c:'noble',r:7,col:18}];
+const ECOL={alkali:'#dc2626',alkaline:'#c2410c',transition:'#1d4ed8',post:'#6d28d9',metalloid:'#0e7490',nonmetal:'#065f46',halogen:'#9d174d',noble:'#92400e',lanthanide:'#be185d',actinide:'#92400e'};
+const STARS=['','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'];
+const PAGE=9;
+const sel=new Map();
+const disc=new Set();
+const symMap={};
+E.forEach(e=>symMap[e.s]=e);
+let lang='en', catF=null, curPage=0, panelShowing=false;
+let curExact=[], curPos=[];
+
+// ── APPLY LANGUAGE TO STATIC DOM ──
+function applyLang(){
+  const t=T[lang];
+  document.getElementById('lbl-sub').textContent=t.sub;
+  document.getElementById('lbl-found').textContent=t.found;
+  document.getElementById('lbl-total').textContent=t.total;
+  document.getElementById('lbl-formula').textContent=t.formula;
+  document.getElementById('lbl-reset').textContent=t.reset;
+  document.getElementById('fbhint').textContent=t.hint;
+  t.leg.forEach((l,i)=>{const el=document.getElementById('leg'+i);if(el)el.textContent=l;});
+}
+
+function setLang(l){
+  lang=l;
+  document.getElementById('btnEN').classList.toggle('on',l==='en');
+  document.getElementById('btnRU').classList.toggle('on',l==='ru');
+  applyLang();
+  updateFBar();
+  if(panelShowing) renderCards();
+}
+
+// ── STOICHIOMETRIC MATCHING ──
+function getPos(s){
+  if(!s.size) return CD;
+  return CD.filter(c=>{
+    for(const [el,cnt] of s.entries()){
+      if(!c.cnt[el]||c.cnt[el]<cnt) return false;
+    }
+    return true;
+  });
+}
+function getExact(s){
+  if(!s.size) return [];
+  return CD.filter(c=>{
+    const ck=c.cnt;
+    if(Object.keys(ck).length!==s.size) return false;
+    for(const [el,cnt] of s.entries()){ if(ck[el]!==cnt) return false; }
+    return true;
+  });
+}
+function getCompat(s){
+  const pos=getPos(s);
+  const co=new Set();
+  pos.forEach(c=>Object.keys(c.cnt).forEach(x=>co.add(x)));
+  return co;
+}
+
+function toggle(sym){
+  const co=getCompat(sel);
+  if(!co.has(sym)) return;
+  sel.set(sym,(sel.get(sym)||0)+1);
+  catF=null; curPage=0;
+  updateAll();
+}
+function removeEl(sym){
+  if(!sel.has(sym)) return;
+  const c=sel.get(sym)-1;
+  if(c<=0) sel.delete(sym); else sel.set(sym,c);
+  catF=null; curPage=0;
+  updateAll();
+}
+
+// Close panel AND reset selection
+function closeAndReset(){
+  document.getElementById('rpanel').classList.remove('open');
+  panelShowing=false;
+  sel.clear(); catF=null; curPage=0;
+  updateAll();
+}
+function reset(){ closeAndReset(); }
+
+function barClick(e){
+  if(sel.size===0) return;
+  if(e.target.classList.contains('fb-rm')) return;
+  if(curPos.length===0) return;
+  openPanel();
+}
+function openPanel(){
+  buildCatBtns(); renderCards();
+  document.getElementById('rpanel').classList.add('open');
+  panelShowing=true;
+}
+
+// ── MAIN UPDATE ──
+function updateAll(){
+  curPos=getPos(sel);
+  curExact=getExact(sel);
+  // Discover exact matches
+  let anyNew=false;
+  curExact.forEach(c=>{ if(!disc.has(c.f)){disc.add(c.f);anyNew=true;} });
+  if(anyNew){
+    spark();
+    document.getElementById('foundNum').textContent=disc.size;
+    document.getElementById('pf').style.width=(disc.size/CD.length*100).toFixed(1)+'%';
+  }
+  updatePT();
+  updateFBar();
+  // Auto-open ONLY on exact match (fix: Ni+S should NOT open, must add all 4 O)
+  if(curExact.length>0){
+    openPanel();
+  } else if(panelShowing){
+    buildCatBtns(); renderCards();
+    if(sel.size===0){
+      document.getElementById('rpanel').classList.remove('open');
+      panelShowing=false;
+    }
+  }
+}
+
+function updatePT(){
+  const co=getCompat(sel);
+  E.forEach(e=>{
+    const d=document.getElementById('el-'+e.s); if(!d) return;
+    d.classList.remove('sel','dim');
+    if(sel.has(e.s)) d.classList.add('sel');
+    else if(sel.size>0&&!co.has(e.s)) d.classList.add('dim');
+  });
+}
+
+function updateFBar(){
+  const t=T[lang];
+  const fbar=document.getElementById('fbar');
+  const fbels=document.getElementById('fbels');
+  const hint=document.getElementById('fbhint');
+  const tiptxt=document.getElementById('fbtip');
+  if(sel.size===0){
+    hint.style.display='';
+    fbels.querySelectorAll('.fb-chip').forEach(x=>x.remove());
+    fbar.className='fbar';
+    tiptxt.textContent=''; tiptxt.className='fb-tip none';
+    return;
+  }
+  hint.style.display='none';
+  fbels.querySelectorAll('.fb-chip').forEach(x=>x.remove());
+  for(const [sym,cnt] of sel.entries()){
+    const e=symMap[sym]; const col=ECOL[e.c]||'#555';
+    const chip=document.createElement('span');
+    chip.className='fb-chip';
+    chip.style.color=col; chip.style.borderColor=col; chip.style.background=col+'18';
+    const cntSpan=cnt>1?'<span class="fb-cnt">×'+cnt+'</span>':'';
+    chip.innerHTML=sym+cntSpan+'<span class="fb-rm" onclick="event.stopPropagation();removeEl(\''+sym+'\')">✕</span>';
+    chip.addEventListener('click',ev=>{ev.stopPropagation();toggle(sym);});
+    chip.title=e.n+' — click to add more, ✕ to remove one';
+    fbels.appendChild(chip);
+  }
+  if(curExact.length>0){
+    fbar.className='fbar match';
+    tiptxt.textContent=t.tipMatch(curExact.length);
+    tiptxt.className='fb-tip match';
+  } else if(curPos.length>0){
+    fbar.className='fbar possible';
+    tiptxt.textContent=t.tipPoss(curPos.length);
+    tiptxt.className='fb-tip possible';
+  } else {
+    fbar.className='fbar';
+    tiptxt.textContent=t.tipNone;
+    tiptxt.className='fb-tip none';
+  }
+}
+
+// ── PANEL ──
+function buildCatBtns(){
+  const t=T[lang];
+  const src=curExact.length>0?curExact:curPos;
+  const cats=[...new Set(src.map(c=>c.cat))];
+  const el=document.getElementById('cfbtns');
+  if(cats.length<=1){el.innerHTML='';catF=null;return;}
+  let h='<button class="cfb'+((!catF)?' on':'')+'" style="color:#1a1a3e;border-color:rgba(90,90,200,.25);'+((!catF)?'background:var(--accent)':'')+';" onclick="setCatF(null)">'+t.all(src.length)+'</button>';
+  cats.forEach(k=>{
+    const cfg=CATCFG[k]||{c:'#555'};
+    const cnt=src.filter(c=>c.cat===k).length;
+    const label=t.catMap[k]||k;
+    h+='<button class="cfb'+(catF===k?' on':'')+'" style="color:'+cfg.c+';border-color:'+cfg.c+';'+(catF===k?'background:'+cfg.c:'')+'" onclick="setCatF(\''+k+'\')">'+(label.split(' ')[0])+' ('+cnt+')</button>';
+  });
+  el.innerHTML=h;
+}
+function setCatF(c){catF=c;curPage=0;buildCatBtns();renderCards();}
+function goPg(p){curPage=p;renderCards();}
+
+function renderCards(){
+  const t=T[lang];
+  const showExact=curExact.length>0;
+  const base=showExact?curExact:curPos;
+  const src=catF?base.filter(c=>c.cat===catF):base;
+  const total=src.length;
+  const pages=Math.ceil(total/PAGE)||1;
+  curPage=Math.max(0,Math.min(curPage,pages-1));
+  const start=curPage*PAGE;
+  const slice=src.slice(start,start+PAGE);
+
+  document.getElementById('rptitle').textContent=showExact?t.panelFound(total):t.panelBuilding(total);
+
+  ['pgr1','pgr2'].forEach(id=>{
+    const p=document.getElementById(id);
+    if(total<=PAGE){p.style.display='none';return;}
+    p.style.display='flex';
+    p.innerHTML='<button onclick="goPg('+(curPage-1)+')" '+(curPage===0?'disabled':'')+'>◀</button>'
+      +'<span class="pgri">'+(curPage+1)+'/'+pages+'</span>'
+      +'<button onclick="goPg('+(curPage+1)+')" '+(curPage>=pages-1?'disabled':'')+'>▶</button>';
+  });
+
+  const grid=document.getElementById('pcards'); grid.innerHTML='';
+
+  if(!showExact&&total>0){
+    const names=src.slice(0,5).map(c=>c.n).join(', ')+(src.length>5?'…':'');
+    const hint=document.createElement('div'); hint.className='build-hint';
+    hint.innerHTML='<strong>'+t.keepAdding+'</strong> <strong>'+names+'</strong>';
+    grid.appendChild(hint);
+  }
+
+  slice.forEach((c,i)=>{
+    const isNew=!disc.has(c.f);
+    const isPoss=!showExact;
+    const cfg=CATCFG[c.cat]||{c:'#555',bg:'rgba(150,150,150,.1)'};
+
+    // Pick language for fact/note
+    const ffT=(lang==='ru'&&c.fr)?c.fr:c.ff;
+    const snT=(lang==='ru'&&c.sr)?c.sr:c.sn;
+    const hasRU=!!(c.fr);
+    const catLabel=t.catMap[c.cat]||c.cat;
+    const stateLabel=t.stateMap[c.s]||c.s;
+
+    const div=document.createElement('div');
+    div.className='ccard'+(isNew&&!isPoss?' nw':'')+(isPoss?' poss':'');
+    div.style.setProperty('--cc',cfg.c);
+    div.style.animationDelay=(i*.05)+'s';
+
+    const phs=[];
+    if(c.s) phs.push('<div class="cprop"><span class="cpropk">'+t.state+'</span>'+stateLabel+'</div>');
+    if(c.pH&&c.pH!=='N/A') phs.push('<div class="cprop"><span class="cpropk">'+t.pH+'</span>'+c.pH+'</div>');
+    if(c.bp&&c.bp!=='Unknown'&&c.bp) phs.push('<div class="cprop"><span class="cpropk">'+t.boiling+'</span>'+c.bp+'</div>');
+    if(c.mp&&c.mp!=='Unknown'&&c.mp) phs.push('<div class="cprop"><span class="cpropk">'+t.melting+'</span>'+c.mp+'</div>');
+
+    div.innerHTML='<div class="cf">'+c.f+'</div>'
+      +'<div class="cn">'+c.n+'</div>'
+      +'<div class="cmeta">'
+        +'<span class="cbadge" style="color:'+cfg.c+';background:'+cfg.bg+'">'+catLabel+'</span>'
+        +'<span class="cstars">'+(STARS[c.d]||'')+'</span>'
+        +(hasRU?'<span class="cru">РУ</span>':'')
+      +'</div>'
+      +(isPoss?'<div class="cposs-lbl">→ '+t.keepAddingCard+'</div>':'')
+      +(ffT?'<div class="cff">'+ffT+'</div>':'')
+      +(!isPoss&&snT?'<div class="csn">📖 '+snT+'</div>':'')
+      +(!isPoss&&phs.length?'<div class="cprops">'+phs.join('')+'</div>':'')
+      +(!isPoss&&c.ft&&c.ft.length?'<div class="cfeats">'+c.ft.map(f=>'<span class="cfeat">'+f+'</span>').join('')+'</div>':'')
+      +(!isPoss&&c.u&&c.u.length?'<div class="cuses">'+c.u.map(u=>'<span class="cuse">'+u+'</span>').join('')+'</div>':'');
+    grid.appendChild(div);
+  });
+}
+
+// ── PERIODIC TABLE ──
+function renderPT(){
+  const pt=document.getElementById('pt');
+  E.filter(e=>e.r<=7).forEach(e=>pt.appendChild(mkCell(e)));
+  [[6,3,'57–71'],[7,3,'89–103']].forEach(([r,c,tx])=>{
+    const p=document.createElement('div');p.className='ph-el';p.style.gridColumn=c;p.style.gridRow=r;p.textContent=tx;pt.appendChild(p);
+  });
+  const fb2=document.getElementById('fb2');
+  E.filter(e=>e.r>=9).forEach(e=>{const d=mkCell(e);d.style.gridRow=e.r-8;fb2.appendChild(d);});
+  ['Lanthanides','Actinides'].forEach((tx,i)=>{
+    const l=document.createElement('div');l.className='ph-el';l.style.gridColumn='1/3';l.style.gridRow=i+1;l.textContent=tx;fb2.appendChild(l);
+  });
+}
+function mkCell(e){
+  const d=document.createElement('div');
+  d.className='el '+e.c; d.id='el-'+e.s;
+  d.style.gridColumn=e.col; if(e.r<=7) d.style.gridRow=e.r;
+  d.innerHTML='<span class="an">'+e.an+'</span><span class="sym">'+e.s+'</span><span class="nm">'+e.n+'</span>';
+  d.addEventListener('click',()=>toggle(e.s));
+  d.addEventListener('mouseenter',ev=>showTip(e,ev));
+  d.addEventListener('mouseleave',()=>document.getElementById('tip').style.display='none');
+  d.addEventListener('mousemove',ev=>{const t=document.getElementById('tip');t.style.left=(ev.clientX+13)+'px';t.style.top=(ev.clientY-10)+'px';});
+  return d;
+}
+const tip=document.getElementById('tip');
+function showTip(e,ev){
+  const t=T[lang];
+  const cnt=CD.filter(c=>c.e.includes(e.s)).length;
+  tip.innerHTML='<div class="tipn">'+e.n+'</div>'
+    +'<div class="tipm">'+t.atomicNum+e.an+'</div>'
+    +'<div class="tipm" style="color:var(--accent);margin-top:2px">'+t.tipEl(e.n,cnt)+'</div>';
+  tip.style.display='block'; tip.style.left=(ev.clientX+13)+'px'; tip.style.top=(ev.clientY-10)+'px';
+}
+function spark(){
+  const f=document.getElementById('flash'); f.style.display='block'; setTimeout(()=>f.style.display='none',700);
+  const em=['⚗️','✨','⭐','💥','🧪','🌟','⚛️','💎'];
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div'); el.className='conf';
+    el.textContent=em[i%em.length]; el.style.left=Math.random()*100+'vw'; el.style.top='-30px';
+    el.style.animationDuration=(1.2+Math.random()*2)+'s'; el.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(el); setTimeout(()=>el.remove(),3500);
+  }
+}
+renderPT();
+applyLang();
+updateAll();
+
+</script>
+</body>
+</html>
